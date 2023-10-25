@@ -33,7 +33,7 @@ We will make sure that after a meeting everyone knows what they should be workin
 
 If an emergency comes up for one of us, the rest of the team will accomodate and we will communicate as much as possible.
 
-If we are working on a massive feature that requires more branching out into sub-features, we can split the workload to make it faster to develop that. (If someone decides they are unable to complete the task, we will reconsider its priority and adjust the feature board).
+If we are working on a massive feature that requires more branching out into sub-features, we can split the workload to make it faster to develop. (If someone decides they are unable to complete the task, we will reconsider its priority and adjust the feature board).
 
 If someone is stuck on a task, they will provide a concise explanation of what they did, what the issue is and how the team could integrate a solution to the problem. 
 
