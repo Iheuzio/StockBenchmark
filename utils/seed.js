@@ -1,74 +1,13 @@
 // import DB from './db'; using the module.exports import version
 
 const DB = require('../db/DB');
-
-// read all the files in dataset/ folder and create an array of objects to add to the database 
-// all the files are structured by tickers in the folder ie: AAPL.json, AMZN.json, etc
-// so for each file you gotta read the file and parse the json and add it to the array
-
-/* Each file looks like this:
-{
-    "chart": {
-        "result": [
-            {
-                "meta": {
-                    "currency": null,
-                    "symbol": "CHKE",
-                    "exchangeName": "NCM",
-                    "instrumentType": "EQUITY",
-                    "firstTradeDate": null,
-                    "regularMarketTime": null,
-                    "gmtoffset": -18000,
-                    "timezone": "EST",
-                    "exchangeTimezoneName": "America/New_York",
-                    "priceHint": 2,
-                    "currentTradingPeriod": {
-                        "pre": {
-                            "timezone": "EST",
-                            "end": 1670855400,
-                            "start": 1670835600,
-                            "gmtoffset": -18000
-                        },
-                        "regular": {
-                            "timezone": "EST",
-                            "end": 1670878800,
-                            "start": 1670855400,
-                            "gmtoffset": -18000
-                        },
-                        "post": {
-                            "timezone": "EST",
-                            "end": 1670893200,
-                            "start": 1670878800,
-                            "gmtoffset": -18000
-                        }
-                    },
-                    "dataGranularity": "1d",
-                    "range": "",
-                    "validRanges": [
-                        "1d",
-                        "5d"
-                    ]
-                },
-                "indicators": {
-                    "quote": [
-                        {}
-                    ],
-                    "adjclose": [
-                        {}
-                    ]
-                }
-            }
-        ],
-        "error": null
-    }
-}
-*/
-
 const fs = require('fs');
 const path = require('path');
-const quotes = [];
+const data_list = [];
 const files = fs.readdirSync(path.join(__dirname, '../dataset'));
+
 files.forEach(file => {
+  const dataset = [];
   const ticker = file.split('.')[0];
   console.log(file);
   const data = fs.readFileSync(path.join(__dirname, `../dataset/${file}`));
@@ -102,6 +41,7 @@ files.forEach(file => {
     }
   });
   }
+  data_list.push(dataset);
 });
 
 (async () => {
@@ -109,8 +49,8 @@ files.forEach(file => {
   try {
     db = new DB();
     // dbname is cluster0 in my case
-    await db.connect('dataset', 'quotes');
-    const num = await db.createMany(quotes);
+    await db.connect('dataset', 'dataset');
+    const num = await db.createManyTickers(data_list);
     console.log(`Inserted ${num} quotes`);
   } catch (e) {
     console.error('could not seed');

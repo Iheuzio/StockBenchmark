@@ -51,6 +51,12 @@ class DB {
   async createMany(quotes) {
     return await instance.collection.insertMany(quotes);
   }
+
+  // delete all records in db
+  async deleteMany(filter) {
+
+  }
+
 }
 
 module.exports = DB;

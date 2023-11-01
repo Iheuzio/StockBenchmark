@@ -1,5 +1,5 @@
 {
-  "name": "quotes_app",
+  "name": "stock_benchmark",
   "version": "1.0.0",
   "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
   "main": "utils/seed.js",
@@ -8,7 +8,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Christopher Bartos, Charles-Alexandre Bouchard, Oni Picotte",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
