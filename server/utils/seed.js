@@ -20,6 +20,9 @@ const path = require('path');
       
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i].split(',');
+        if (row.length !== columns.length || row[0] === '') {
+          continue;
+        }
         const quote = {
           timestamp: row[0],
           low: parseFloat(row[1]),
