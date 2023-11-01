@@ -57,6 +57,24 @@ class DB {
     return await instance.collection.deleteMany(filter)
   }
 
+  async createManyTickers(data_list) {
+    let count = 0;
+    for (let i = 0; i < data_list.length; i++) {
+      const ticker = data_list[i];
+      const result = await instance.collection.insertMany(ticker);
+      count += result.insertedCount;
+    }
+    return count;
+  }
+
+  async createTickerData(ticker, data) {
+    const tickerData = {
+      ticker: ticker,
+      data: data
+    };
+    return await instance.collection.insertOne(tickerData);
+  }
+
 }
 
 module.exports = DB;
