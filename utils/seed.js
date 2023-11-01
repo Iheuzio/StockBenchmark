@@ -75,21 +75,29 @@ files.forEach(file => {
   const parsed = JSON.parse(data);
   if (Array.isArray(parsed.chart.result)) {
     parsed.chart.result.forEach(result => {
-    if (result.indicators.quote[0]) {
-      const quote = {
-        ticker: ticker,
-        timestamp: result.meta.currentTradingPeriod.regular.start,
-        open: result.indicators.quote[0].open ? result.indicators.quote[0].open[0] : null,
-        high: result.indicators.quote[0].high ? result.indicators.quote[0].high[0] : null,
-        low: result.indicators.quote[0].low ? result.indicators.quote[0].low[0] : null,
-        close: result.indicators.quote[0].close ? result.indicators.quote[0].close[0] : null,
-        volume: result.indicators.quote[0].volume ? result.indicators.quote[0].volume[0] : null
-      };
-      quotes.push(quote);
-    } else {
-      console.error(`Invalid data in file ${file}`);
-    }
-  });
+      if (result.indicators.quote[0]) {
+        const open = result.indicators.quote[0].open || [];
+        const high = result.indicators.quote[0].high || [];
+        const low = result.indicators.quote[0].low || [];
+        const close = result.indicators.quote[0].close || [];
+        const volume = result.indicators.quote[0].volume || [];
+        const timestamps = result.timestamp || [];
+        for (let i = 0; i < open.length; i++) {
+          const quote = {
+            ticker: ticker,
+            timestamp: timestamps[i],
+            open: open[i],
+            high: high[i],
+            low: low[i],
+            close: close[i],
+            volume: volume[i]
+          };
+          quotes.push(quote);
+        }
+      } else {
+        console.error(`Invalid data in file ${file}`);
+      }
+    });
   }
 });
 
@@ -98,7 +106,7 @@ files.forEach(file => {
   try {
     db = new DB();
     // dbname is cluster0 in my case
-    await db.connect('dataset', 'quotes');
+    await db.connect('dataset', 'dataset');
     const num = await db.createMany(quotes);
     console.log(`Inserted ${num} quotes`);
   } catch (e) {
