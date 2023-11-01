@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors'); // Import the cors middleware
+const cors = require('cors');
 const app = express();
 
 // Middleware to parse JSON requests
@@ -8,29 +8,10 @@ app.use(express.json());
 // Enable CORS for all routes
 app.use(cors());
 
-// GET route to read all quotes
-app.get('/tickers', async (req, res) => {
-  // Access the database connection through app.locals or other methods
-  try {
-    const tickers = await app.get('db').readAllTickers();
-    res.json(tickers);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ error: 'No data found' });
-  }
-});
+// Import the tickerRoute and use it
+const tickerRoute = require('./routes/tickerData');
+app.use('/', tickerRoute);
 
-app.get('/tickers/:ticker', async (req, res) => {
-  // Access the database connection through app.locals or other methods
-  try {
-    const ticker = req.params.ticker;
-    const tickerData = await app.get('db').readTickerData(ticker);
-    res.json(tickerData);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ error: 'No data found' });
-  }
-});
 
 // POST route to create a new quote
 app.post('/new-quote', async (req, res) => {
