@@ -8,7 +8,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Christopher Bartos, Charles-Alexandre Bouchard, Oni Picotte",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
