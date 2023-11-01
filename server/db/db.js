@@ -75,6 +75,14 @@ class DB {
     return await instance.collection.insertOne(tickerData);
   }
 
+  async readTickerData(ticker) {
+    return await instance.collection.findOne({ ticker: ticker });
+  }
+
+  async readAllTickers() {
+    // return every ticker ticker: "ticker value" from all the items in the db
+    return await instance.collection.find().project({ _id: 0, ticker: 1 }).toArray();
+  }
 }
 
 module.exports = DB;

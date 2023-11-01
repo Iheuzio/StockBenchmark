@@ -9,11 +9,23 @@ app.use(express.json());
 app.use(cors());
 
 // GET route to read all quotes
-app.get('/quotes', async (req, res) => {
+app.get('/tickers', async (req, res) => {
   // Access the database connection through app.locals or other methods
   try {
-    const quotes = await app.get('db').readAll();
-    res.json(quotes);
+    const tickers = await app.get('db').readAllTickers();
+    res.json(tickers);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({ error: 'No data found' });
+  }
+});
+
+app.get('/tickers/:ticker', async (req, res) => {
+  // Access the database connection through app.locals or other methods
+  try {
+    const ticker = req.params.ticker;
+    const tickerData = await app.get('db').readTickerData(ticker);
+    res.json(tickerData);
   } catch (error) {
     console.error(error);
     res.status(404).json({ error: 'No data found' });
