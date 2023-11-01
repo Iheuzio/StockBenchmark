@@ -1,13 +1,13 @@
-const DB = require('../db/DB');
+const DB = require('../db/db');
 
 (async () => {
   let db;
   try {
     db = new DB();
     // dbname is cluster0 in my case
-    await db.connect('dataset', 'quotes');
+    await db.connect('dataset', 'stocks');
     const num = await db.deleteMany({});
-    console.log(`Deleted ${num} quotes`);
+    console.log(`Deleted ${num} stocks`);
   } catch (e) {
     console.error('could not delete');
     console.dir(e);

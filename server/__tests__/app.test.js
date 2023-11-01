@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
-const DB = require('../db/DB');
+const DB = require('../db/db');
 
 // Mock the DB class
 jest.mock('../db/DB');

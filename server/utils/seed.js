@@ -1,13 +1,13 @@
 // import DB from './db'; using the module.exports import version
-const DB = require('../db/DB');
+const DB = require('../db/db');
 const fs = require('fs');
 const path = require('path');
-const quotes = [];
-const files = fs.readdirSync(path.join(__dirname, '../dataset'));
+const stocks = [];
+const files = fs.readdirSync(path.join(__dirname, '../../dataset'));
 files.forEach(file => {
   const ticker = file.split('.')[0];
   console.log(file);
-  const data = fs.readFileSync(path.join(__dirname, `../dataset/${file}`));
+  const data = fs.readFileSync(path.join(__dirname, `../../dataset/${file}`));
   const parsed = JSON.parse(data);
   if (Array.isArray(parsed.chart.result)) {
     parsed.chart.result.forEach(result => {
@@ -31,7 +31,7 @@ files.forEach(file => {
           data: tickerData
         };
         
-        quotes.push(quote);
+        stocks.push(quote);
       }
     } else {
       console.error(`Invalid data in file ${file}`);
@@ -46,7 +46,7 @@ files.forEach(file => {
     db = new DB();
     // dbname is cluster0 in my case
     await db.connect('dataset', 'stocks');
-    const num = await db.createMany(quotes);
+    const num = await db.createMany(stocks);
     console.log(`Inserted ${num} stocks`);
   } catch (e) {
     console.error('could not seed');

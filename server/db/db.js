@@ -54,7 +54,7 @@ class DB {
 
   // delete all records in db
   async deleteMany(filter) {
-
+    return await instance.collection.deleteMany(filter)
   }
 
 }
