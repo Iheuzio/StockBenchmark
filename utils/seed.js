@@ -76,16 +76,27 @@ files.forEach(file => {
   if (Array.isArray(parsed.chart.result)) {
     parsed.chart.result.forEach(result => {
     if (result.indicators.quote[0]) {
-      const quote = {
-        ticker: ticker,
-        timestamp: result.meta.currentTradingPeriod.regular.start,
-        open: result.indicators.quote[0].open ? result.indicators.quote[0].open[0] : null,
-        high: result.indicators.quote[0].high ? result.indicators.quote[0].high[0] : null,
-        low: result.indicators.quote[0].low ? result.indicators.quote[0].low[0] : null,
-        close: result.indicators.quote[0].close ? result.indicators.quote[0].close[0] : null,
-        volume: result.indicators.quote[0].volume ? result.indicators.quote[0].volume[0] : null
-      };
-      quotes.push(quote);
+      if (result.timestamp) {
+        const tickerData = []
+        for (let i = 0; i < result.timestamp.length; i++) {
+          const single = {
+            timestamp: result.timestamp[i],
+            open: result.indicators.quote[0].open[i],
+            high: result.indicators.quote[0].high[i],
+            low: result.indicators.quote[0].low[i],
+            close: result.indicators.quote[0].close[i],
+            volume: result.indicators.quote[0].volume[i],
+          }
+          tickerData.push(single)
+        }
+        const quote = {
+          ticker: ticker,
+          start_timestamp: result.meta.currentTradingPeriod.regular.start,
+          data: tickerData
+        };
+        
+        quotes.push(quote);
+      }
     } else {
       console.error(`Invalid data in file ${file}`);
     }
