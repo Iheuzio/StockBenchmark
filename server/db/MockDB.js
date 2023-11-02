@@ -3,6 +3,8 @@ class MockDB {
     this.data = {
       collection: [],
     };
+    this.databaseName = 'dataset';
+    this.collectionName = 'dataset';
   }
 
   async connect(dbname, collName) {

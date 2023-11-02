@@ -10,8 +10,8 @@ describe('MockDB Unit Tests', () => {
   describe('connect', () => {
     it('should establish a connection to the database', async () => {
       await mockDB.connect('dataset', 'dataset');
-      expect(mockDB.db.databaseName).toBe('dataset');
-      expect(mockDB.collection.collectionName).toBe('dataset');
+      expect(mockDB.databaseName).toBe('dataset');
+      expect(mockDB.collectionName).toBe('dataset');
     });
   });
 
@@ -20,7 +20,7 @@ describe('MockDB Unit Tests', () => {
       await mockDB.connect('dataset', 'dataset');
       await mockDB.close();
       // basically acts like a closed connection
-      expect(mockDB.db).toBeNull();
+      expect(mockDB.data.collection).toBeNull();
     });
   });
 
