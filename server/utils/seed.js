@@ -9,11 +9,11 @@ const path = require('path');
     await db.connect('dataset', 'dataset');
     
     const files = fs.readdirSync(path.join(__dirname, '../dataset'));
-    
+    const dataToInsert = [];
+
     for (const file of files) {
       const ticker = file.split('.')[0];
       // eslint-disable-next-line no-console
-      console.log(file);
       const data = fs.readFileSync(path.join(__dirname, `../dataset/${file}`), 'utf-8');
       const rows = data.split('\n');
       const columns = rows[0].split(',');
@@ -36,12 +36,12 @@ const path = require('path');
         dataset.push(quote);
       }
       
-      // eslint-disable-next-line no-await-in-loop
-      await db.createTickerData(ticker, dataset);
-      // eslint-disable-next-line no-console
-      console.log(`Inserted data for ticker: ${ticker}`);
+      dataToInsert.push({ ticker, data: dataset });
     }
 
+    await db.createManyTickerData(dataToInsert);
+    console.log('Successfully seeded');
+    
   } catch (e) {
     console.error('Could not seed');
     // eslint-disable-next-line no-console
