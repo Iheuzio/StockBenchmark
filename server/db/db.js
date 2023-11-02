@@ -96,6 +96,8 @@ class DB {
       ticker: 1,
       data: 1
     };
+
+    await instance.collection.createIndex({ 'data.open': 1 });
   
     const documents = await instance.collection.find(query).project(projection).toArray();
   
@@ -128,8 +130,89 @@ class DB {
   
     return bestDay;
   }
+
+  async findBestPerformingDays() {
+    const allStocks = await instance.readAllTickers();
+    const bestDaysPromises = [];
+
+    for (const stock of allStocks) {
+      bestDaysPromises.push(instance.readBestPerformance(stock.ticker));
+    }
+
+    const bestDays = await Promise.all(bestDaysPromises);
+
+    const filteredBestDays = bestDays.filter(day => day !== null);
+
+    filteredBestDays.sort((a, b) => b.percentage - a.percentage);
+
+    await instance.collection.createIndex({ percentage: -1 });
+
+    return filteredBestDays;
+  }
+
+  async readWorstPerformance(stock) {
+    const query = {
+      ticker: stock
+    };
   
+    const projection = {
+      _id: 0,
+      ticker: 1,
+      data: 1
+    };
+
+    await instance.collection.createIndex({ 'data.open': 1 });
   
+    const documents = await instance.collection.find(query).project(projection).toArray();
+  
+    let worstDay = null;
+    let minPercentage = 0;
+  
+    documents.forEach(doc => {
+      const data = doc.data;
+      data.forEach(item => {
+        const open = item.open;
+        const close = item.close;
+        
+        // Ensure open is greater than 0 to avoid division by zero
+        if (open > 0) {
+          const percentage = ((close - open) / open) * 100;
+  
+          if (percentage < minPercentage) {
+            minPercentage = percentage;
+            worstDay = {
+              day: item.timestamp,
+              stock: doc.ticker,
+              open: open,
+              close: close,
+              percentage: percentage
+            };
+          }
+        }
+      });
+    });
+  
+    return worstDay;
+  }
+
+  async findWorstPerformingDays() {
+    const allStocks = await instance.readAllTickers();
+    const worstDaysPromises = [];
+
+    for (const stock of allStocks) {
+      worstDaysPromises.push(instance.readWorstPerformance(stock.ticker));
+    }
+
+    const worstDays = await Promise.all(worstDaysPromises);
+
+    const filteredWorstDays = worstDays.filter(day => day !== null);
+
+    filteredWorstDays.sort((a, b) => a.percentage - b.percentage);
+
+    await instance.collection.createIndex({ percentage: 1 });
+
+    return filteredWorstDays;
+  }
 }
 
 module.exports = DB;
