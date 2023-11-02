@@ -84,6 +84,52 @@ class DB {
     // return every ticker ticker: "ticker value" from all the items in the db
     return await instance.collection.find().project({ _id: 0, ticker: 1 }).toArray();
   }
+
+  async readBestPerformance(stock) {
+    const query = {
+      ticker: stock
+    };
+  
+    // Project only the necessary fields for the calculation
+    const projection = {
+      _id: 0,
+      ticker: 1,
+      data: 1
+    };
+  
+    const documents = await instance.collection.find(query).project(projection).toArray();
+  
+    let bestDay = null;
+    let maxPercentage = 0;
+  
+    documents.forEach(doc => {
+      const data = doc.data;
+      data.forEach(item => {
+        const open = item.open;
+        const close = item.close;
+        
+        // Ensure open is greater than 0 to avoid division by zero
+        if (open > 0) {
+          const percentage = ((close - open) / open) * 100;
+  
+          if (percentage > maxPercentage) {
+            maxPercentage = percentage;
+            bestDay = {
+              day: item.timestamp,
+              stock: doc.ticker,
+              open: open,
+              close: close,
+              percentage: percentage
+            };
+          }
+        }
+      });
+    });
+  
+    return bestDay;
+  }
+  
+  
 }
 
 module.exports = DB;

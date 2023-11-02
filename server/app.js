@@ -9,6 +9,9 @@ app.use(cors());
 const tickerRoute = require('./routes/tickerData');
 app.use('/', tickerRoute);
 
+const performanceRoute = require('./routes/performance');
+app.use('/', performanceRoute);
+
 // Use the react app as front
 app.use(express.static('../client/build'));
 
