@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+const app = require('../app');
+const DB = require('../db/db');
+const port = process.env.PORT || 3000;
+
+(async () => {
+  try {
+    const db = new DB();
+    await db.connect('dataset', 'dataset');
+    app.set('db', db);
+  } catch (e) {
+    console.error('could not connect');
+    console.dir(e);
+    process.exit();
+  }
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}!`);
+  });
+})();

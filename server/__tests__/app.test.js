@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
-const DB = require('../db/DB');
+const DB = require('../db/db');
 
 const getTickersTest = () => {
   test('It should respond with a JSON array of tickers', async () => {
