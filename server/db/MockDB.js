@@ -1,7 +1,7 @@
 class MockDB {
   constructor() {
     this.data = {
-      collection: [], // Store your mock data here
+      collection: [],
     };
   }
 
@@ -55,25 +55,16 @@ class MockDB {
 
   async readAllTickers() {
     // Return all tickers from the mock data
-    return this.data.collection
-      .filter((item) => item.ticker)
-      .map((item) => ({ ticker: item.ticker }));
+    return this.data.collection.
+      filter((item) => item.ticker).
+      map((item) => ({ ticker: item.ticker }));
   }
 
   async readBestPerformance(stock) {
-    const query = {
-      ticker: stock
-    };
-  
-    const projection = {
-      _id: 0,
-      ticker: 1,
-      data: 1
-    };
-
-    const documents = this.data.collection
-      .filter((item) => item.ticker === stock)
-      .map((item) => ({
+    
+    const documents = this.data.collection.
+      filter((item) => item.ticker === stock).
+      map((item) => ({
         ticker: item.ticker,
         data: item.data,
       }));
@@ -125,19 +116,10 @@ class MockDB {
   }
 
   async readWorstPerformance(stock) {
-    const query = {
-      ticker: stock
-    };
-  
-    const projection = {
-      _id: 0,
-      ticker: 1,
-      data: 1
-    };
 
-    const documents = this.data.collection
-      .filter((item) => item.ticker === stock)
-      .map((item) => ({
+    const documents = this.data.collection.
+      filter((item) => item.ticker === stock).
+      map((item) => ({
         ticker: item.ticker,
         data: item.data,
       }));
