@@ -23,7 +23,6 @@ class DB {
     instance.db = await instance.client.db(dbname);
     // Send a ping to confirm a successful connection
     await instance.client.db(dbname).command({ ping: 1 });
-    // eslint-disable-next-line no-console
     console.log('Successfully connected to MongoDB database ' + dbname);
     instance.collection = await instance.db.collection(collName);
   }
@@ -37,6 +36,10 @@ class DB {
     return await instance.collection.find().toArray();
   }
 
+  // async readAll() {
+  //   return await instance.collection.find().projection({ _id: 0 }).toArray();
+  // }
+
   async create(quote) {
     return await instance.collection.insertOne(quote);
   }
@@ -48,44 +51,8 @@ class DB {
       await instance.close();
     }
   }
-
-  async createMany(quotes) {
-    return await instance.collection.insertMany(quotes);
-  }
-
-  // delete all records in db
-  async deleteMany(filter) {
-    return await instance.collection.deleteMany(filter);
-  }
-
-  async createManyTickers(dataList) {
-    let count = 0;
-    for (let i = 0; i < dataList.length; i++) {
-      const ticker = dataList[i];
-      // eslint-disable-next-line no-await-in-loop
-      const result = await instance.collection.insertMany(ticker);
-      count += result.insertedCount;
-    }
-    return count;
-  }
-
-  async createTickerData(ticker, data) {
-    const tickerData = {
-      ticker: ticker,
-      data: data
-    };
-    return await instance.collection.insertOne(tickerData);
-  }
-
-  async readTickerData(ticker) {
-    return await instance.collection.findOne({ ticker: ticker });
-  }
-
-  async readAllTickers() {
-    // return every ticker ticker: "ticker value" from all the items in the db
-    return await instance.collection.find().project({ _id: 0, ticker: 1 }).toArray();
-  }
 }
 
-module.exports = DB;
+export default DB;
+
 
