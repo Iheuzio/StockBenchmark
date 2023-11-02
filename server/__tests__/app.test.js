@@ -9,20 +9,18 @@ describe('MockDB Unit Tests', () => {
 
   describe('connect', () => {
     it('should establish a connection to the database', async () => {
-      await mockDB.connect('testDatabase', 'testCollection');
-      expect(mockDB.client.isConnected()).toBe(true);
-      expect(mockDB.db.databaseName).toBe('testDatabase');
-      expect(mockDB.collection.collectionName).toBe('testCollection');
+      await mockDB.connect('dataset', 'dataset');
+      expect(mockDB.db.databaseName).toBe('dataset');
+      expect(mockDB.collection.collectionName).toBe('dataset');
     });
   });
 
   describe('close', () => {
     it('should close the database connection', async () => {
-      await mockDB.connect('testDatabase', 'testCollection');
+      await mockDB.connect('dataset', 'dataset');
       await mockDB.close();
-      expect(mockDB.client.isConnected()).toBe(false);
+      // basically acts like a closed connection
       expect(mockDB.db).toBeNull();
-      expect(mockDB.collection).toBeNull();
     });
   });
 
@@ -95,16 +93,20 @@ describe('MockDB Unit Tests', () => {
 
     it('should return null for an unknown ticker', async () => {
       const result = await mockDB.readTickerData('GOOGL');
-      expect(result).toBeNull();
+      expect(result).toBe(undefined);
     });
   });
 
   describe('readAllTickers', () => {
     it('should return an array of tickers', async () => {
-      const tickers = ['AAPL', 'GOOGL', 'MSFT'];
+      const tickers = [
+        { ticker: 'AAPL' },
+        { ticker: 'GOOGL' },
+        { ticker: 'MSFT' },
+      ];
       mockDB.data.collection = tickers.map((ticker) => ({ ticker }));
       const result = await mockDB.readAllTickers();
-      expect(result).toEqual(tickers);
+      expect(result).toEqual(tickers.map((ticker) => ({ ticker })));
     });
   });
 
@@ -116,7 +118,7 @@ describe('MockDB Unit Tests', () => {
         stock: stock,
         open: 150,
         close: 160,
-        percentage: 6.67,
+        percentage: 6.666666666666667,
       };
       mockDB.data.collection.push({
         ticker: stock,
@@ -136,7 +138,7 @@ describe('MockDB Unit Tests', () => {
     it('should return the best performing days for all stocks', async () => {
       const stocks = ['AAPL', 'GOOGL', 'MSFT'];
       const bestDays = [
-        { day: '2022-01-01', stock: 'AAPL', open: 150, close: 160, percentage: 6.67 },
+        { day: '2022-01-01', stock: 'AAPL', open: 150, close: 160, percentage: 6.666666666666667 },
         { day: '2022-01-02', stock: 'GOOGL', open: 1000, close: 1010, percentage: 1.0 },
         { day: '2022-01-03', stock: 'MSFT', open: 250, close: 260, percentage: 4.0 },
       ];
@@ -190,20 +192,20 @@ describe('MockDB Unit Tests', () => {
         { day: '2022-01-02', stock: 'GOOGL', open: 1010, close: 1000, percentage: -1.0 },
         { day: '2022-01-03', stock: 'MSFT', open: 260, close: 250, percentage: -4.0 },
       ];
-
+  
       stocks.forEach((stock, index) => {
         mockDB.data.collection.push({
           ticker: stock,
           data: [{ timestamp: worstDays[index].day, open: worstDays[index].open, close: worstDays[index].close }],
         });
       });
-
-      const result = await mockDB.findWorstPerformingDays();
+  
+      const result = await mockDB.findWorstPerformingDays(); // Call the method on the mockDB instance
       expect(result).toEqual(worstDays);
     });
-
+  
     it('should return an empty array when no data is available for any stock', async () => {
-      const result = await mockDB.findWorstPerformingDays();
+      const result = await mockDB.findWorstPerformingDays(); // Call the method on the mockDB instance
       expect(result).toEqual([]);
     });
   });

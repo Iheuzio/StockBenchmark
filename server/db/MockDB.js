@@ -13,6 +13,7 @@ class MockDB {
   }
 
   async close() {
+    this.data.collection = null;
     return true;
   }
 
