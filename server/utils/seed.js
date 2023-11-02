@@ -40,6 +40,7 @@ const path = require('path');
     }
 
     await db.createManyTickerData(dataToInsert);
+    console.log('Successfully seeded');
     
   } catch (e) {
     console.error('Could not seed');

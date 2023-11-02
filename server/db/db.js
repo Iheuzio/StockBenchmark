@@ -51,7 +51,9 @@ class DB {
 
   // delete all records in db
   async deleteMany(filter) {
-    return await instance.collection.deleteMany(filter);
+    // delete all records for the collection matching the filter
+    const result = await instance.collection.deleteMany(filter);
+    return result.deletedCount;
   }
 
   async createManyTickerData(dataToInsert) {
