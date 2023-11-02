@@ -1,4 +1,4 @@
-const DB = require('../db/DB');
+const DB = require('../db/db');
 const fs = require('fs');
 const path = require('path');
 
@@ -9,7 +9,8 @@ const path = require('path');
     await db.connect('dataset', 'dataset');
     
     const files = fs.readdirSync(path.join(__dirname, '../dataset'));
-    
+    const dataToInsert = [];
+
     for (const file of files) {
       const ticker = file.split('.')[0];
       console.log(file);
@@ -35,10 +36,14 @@ const path = require('path');
         dataset.push(quote);
       }
       
-      await db.createTickerData(ticker, dataset);
-      console.log(`Inserted data for ticker: ${ticker}`);
+      dataToInsert.push({ ticker, data: dataset });
+      console.log(`Data prepared for ticker: ${ticker}`);
     }
 
+    // Use the createManyTickerData method in the DB class to insert all the data for each ticker at once
+    await db.createManyTickerData(dataToInsert);
+    console.log(`Inserted data for all tickers`);
+    
   } catch (e) {
     console.error('Could not seed');
     console.dir(e);

@@ -48,23 +48,24 @@ class DB {
     }
   }
 
-  async createMany(quotes) {
-    return await instance.collection.insertMany(quotes);
-  }
-
   // delete all records in db
   async deleteMany(filter) {
     return await instance.collection.deleteMany(filter)
   }
 
-  async createManyTickers(data_list) {
-    let count = 0;
-    for (let i = 0; i < data_list.length; i++) {
-      const ticker = data_list[i];
-      const result = await instance.collection.insertMany(ticker);
-      count += result.insertedCount;
+  async createManyTickerData(dataToInsert) {
+    const bulkInsertData = dataToInsert.map(({ ticker, data }) => ({
+      insertOne: {
+        document: { ticker, data },
+      },
+    }));
+
+    try {
+      await this.collection.bulkWrite(bulkInsertData);
+    } catch (error) {
+      console.error('Error inserting data for all tickers');
+      console.error(error);
     }
-    return count;
   }
 
   async createTickerData(ticker, data) {

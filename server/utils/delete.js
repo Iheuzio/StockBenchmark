@@ -1,4 +1,4 @@
-const DB = require('../db/DB');
+const DB = require('../db/db');
 
 (async () => {
   let db;
