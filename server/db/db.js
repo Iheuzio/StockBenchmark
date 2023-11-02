@@ -4,8 +4,8 @@ const { MongoClient } = require('mongodb');
 
 let instance = null;
 class DB {
-    constructor(){
-   //instance is the singleton, defined in outer scope
+  constructor(){
+    //instance is the singleton, defined in outer scope
     if (!instance){
       instance = this;
       this.client = new MongoClient(dbUrl);
@@ -23,6 +23,7 @@ class DB {
     instance.db = await instance.client.db(dbname);
     // Send a ping to confirm a successful connection
     await instance.client.db(dbname).command({ ping: 1 });
+    // eslint-disable-next-line no-console
     console.log('Successfully connected to MongoDB database ' + dbname);
     instance.collection = await instance.db.collection(collName);
   }
@@ -54,13 +55,14 @@ class DB {
 
   // delete all records in db
   async deleteMany(filter) {
-    return await instance.collection.deleteMany(filter)
+    return await instance.collection.deleteMany(filter);
   }
 
-  async createManyTickers(data_list) {
+  async createManyTickers(dataList) {
     let count = 0;
-    for (let i = 0; i < data_list.length; i++) {
-      const ticker = data_list[i];
+    for (let i = 0; i < dataList.length; i++) {
+      const ticker = dataList[i];
+      // eslint-disable-next-line no-await-in-loop
       const result = await instance.collection.insertMany(ticker);
       count += result.insertedCount;
     }

@@ -1,4 +1,4 @@
-const DB = require('../db/DB');
+const DB = require('../db/db');
 const fs = require('fs');
 const path = require('path');
 
@@ -12,6 +12,7 @@ const path = require('path');
     
     for (const file of files) {
       const ticker = file.split('.')[0];
+      // eslint-disable-next-line no-console
       console.log(file);
       const data = fs.readFileSync(path.join(__dirname, `../dataset/${file}`), 'utf-8');
       const rows = data.split('\n');
@@ -30,17 +31,20 @@ const path = require('path');
           volume: parseInt(row[3]),
           high: parseFloat(row[4]),
           close: parseFloat(row[5]),
-          adjusted_close: parseFloat(row[6])
+          adjustedClose: parseFloat(row[6])
         };
         dataset.push(quote);
       }
       
+      // eslint-disable-next-line no-await-in-loop
       await db.createTickerData(ticker, dataset);
+      // eslint-disable-next-line no-console
       console.log(`Inserted data for ticker: ${ticker}`);
     }
 
   } catch (e) {
     console.error('Could not seed');
+    // eslint-disable-next-line no-console
     console.dir(e);
   } finally {
     if (db) {
