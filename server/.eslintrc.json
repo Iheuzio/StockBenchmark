@@ -13,7 +13,7 @@
       "ecmaVersion": "latest",
       "sourceType": "module"
   },
-
+  "ignorePatterns": "**/__tests__",
 
   "rules": {
     ////////// Possible Errors //////////
