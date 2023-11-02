@@ -1,62 +1,80 @@
 const request = require('supertest');
 const app = require('../app');
-const DB = require('../db/db');
+const DB = require('../db/DB');
 
-// Mock the DB class
-jest.mock('../db/DB');
+const getTickersTest = () => {
+  test('It should respond with a JSON array of tickers', async () => {
+    // Mock the database function to return tickers
+    jest.spyOn(DB.prototype, 'readAllTickers').mockResolvedValue([
+      { ticker: 'AAPL' },
+      { ticker: 'GOOGL' },
+    ]);
 
-describe('API Tests', () => {
-  
-  test('GET /quotes route should respond with valid quotes', async () => {
-    const mockQuotes = [
-      { quote: 'Test quote 1', author: 'Test author 1' },
-      { quote: 'Test quote 2', author: 'Test author 2' }
-    ];
+    const response = await request(app).get('/tickers');
 
-    // Mock the readAll method to return mockQuotes
-    DB.readAll.mockResolvedValue(mockQuotes);
-
-    const response = await request(app).get('/quotes');
-
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual(mockQuotes);
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual([
+      { ticker: 'AAPL' },
+      { ticker: 'GOOGL' },
+    ]);
   });
+};
 
-  // I do not understand why this test is failing and couldn't figure out
-  // how to fix it.
-  test('It should respond with a 201', async () => {
-    jest.spyOn(DB.prototype, 'create').mockResolvedValue(
-      {insertedId: '1'});
+const getTickerDataTest = () => {
+  test('It should respond with data for a specific ticker', async () => {
+    const tickerData = {
+      ticker: 'AAPL',
+      data: [
+        {
+          timestamp: '2020-01-01',
+          low: 72.5,
+          open: 74.06,
+          volume: 1000000,
+          high: 75.15,
+          close: 75.15,
+          adjusted_close: 74.06,
+        },
+      ],
+    };
+
+    // Mock the database function to return ticker data
+    jest.spyOn(DB.prototype, 'readTickerData').mockResolvedValue(tickerData);
+
+    const response = await request(app).get('/tickers/AAPL');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual(tickerData);
+  });
+};
+
+const postTickerDataTest = () => {
+  test('It should respond with a 201 and "Ticker data added"', async () => {
+    // Mock the database function to return a successful result
+    jest.spyOn(DB.prototype, 'createTickerData').mockResolvedValue({ insertedId: '1' });
+
     const response = await request(app)
-      .post('/new-quote')
-      .send({quote: 'dunno', author: 'me'})
+      .post('/tickers')
+      .send({
+        ticker: 'AAPL',
+        data: [
+          {
+            timestamp: '2020-01-01',
+            low: 72.5,
+            open: 74.06,
+            volume: 1000000,
+            high: 75.15,
+            close: 75.15,
+            adjusted_close: 74.06,
+          },
+        ],
+      })
       .set('Accept', 'application/json');
-    //if plain text, use text, if json use body
-    expect(response.text).toEqual('Quote added');
+
     expect(response.statusCode).toBe(201);
+    expect(response.text).toBe('Ticker data added');
   });
+};
 
-  test('It should respond with a 400', async () => {
-    const response = await request(app)
-      .post('/new-quote')
-      .send({ quote: 'dunno' })
-      .set('Accept', 'application/json');
-
-    expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: 'Invalid request. Both quote and author are required.' });
-  });
-
-  test('It should respond with a 404', async () => {
-    // Mock the create method to throw an error
-    DB.prototype.create.mockRejectedValue(new Error('Invalid format for quote'));
-
-    const response = await request(app)
-      .post('/new-quote')
-      .send({ quote: 'dunno', author: 'me', extra: 'extra' })
-      .set('Accept', 'application/json');
-
-    expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: 'Invalid format for quote' });
-  });
-
-});
+describe('GET /tickers', getTickersTest);
+describe('GET /tickers/:ticker', getTickerDataTest);
+describe('POST /tickers', postTickerDataTest);
