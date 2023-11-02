@@ -2,15 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Middleware to parse JSON requests
-app.use(express.json());
-
 // Enable CORS for all routes
 app.use(cors());
 
 // Import the tickerRoute and use it
 const tickerRoute = require('./routes/tickerData');
 app.use('/', tickerRoute);
+
+// Use the react app as front
+app.use(express.static('../client/build'));
 
 
 // POST route to create a new quote
@@ -30,9 +30,6 @@ app.post('/new-quote', async (req, res) => {
     res.status(400).json({ error: 'Invalid format for quote' });
   }
 });
-
-// Serve static files from the './public' directory
-app.use(express.static('public'));
 
 // Default 404 route
 app.use((req, res) => {
