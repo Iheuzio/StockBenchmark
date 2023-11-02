@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const app = require('../app');
 const DB = require('../db/db');
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 (async () => {
   try {
