@@ -55,14 +55,13 @@ class DB {
   }
 
   async createManyTickerData(dataToInsert) {
-    const bulkInsertData = dataToInsert.map(({ ticker, data }) => ({
-      insertOne: {
-        document: { ticker, data },
-      },
+    const dataForInsertMany = dataToInsert.map(({ ticker, data }) => ({
+      ticker,
+      data,
     }));
 
     try {
-      await this.collection.bulkWrite(bulkInsertData);
+      await this.collection.insertMany(dataForInsertMany);
     } catch (error) {
       console.error('Error inserting data for all tickers');
       console.error(error);

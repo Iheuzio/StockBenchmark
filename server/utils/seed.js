@@ -14,7 +14,6 @@ const path = require('path');
     for (const file of files) {
       const ticker = file.split('.')[0];
       // eslint-disable-next-line no-console
-      console.log(file);
       const data = fs.readFileSync(path.join(__dirname, `../dataset/${file}`), 'utf-8');
       const rows = data.split('\n');
       const columns = rows[0].split(',');
