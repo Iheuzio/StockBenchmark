@@ -1,10 +1,10 @@
 import './App.css';
-import Tickers from './Tickers/Tickers';
+import Search from './Search/Search';
 
 function App() {
   return (
     <>
-      <Tickers />
+      <Search />
     </>
   );
 }
