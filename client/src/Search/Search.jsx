@@ -18,10 +18,16 @@ function Search() {
 
 
   if (tickers) {
-    const results = tickers.filter((ticker) => {
+    let results = tickers.filter((ticker) => {
       return ticker.ticker.toLowerCase().startsWith(search.toLowerCase());
-    })
-    .slice(0,5);
+    });
+    if (results.length < 5) {
+      results = results.concat(tickers.filter((ticker) => {
+        return ticker.ticker.toLowerCase().includes(search.toLowerCase()) &&
+               !results.includes(ticker);
+      }));
+    }
+    results = results.slice(0, 10);
 
     return (
       <div className='Search'>
