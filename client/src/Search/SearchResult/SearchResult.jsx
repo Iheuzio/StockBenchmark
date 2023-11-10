@@ -2,10 +2,13 @@ import './SearchResult.css'
 
 function SearchResult({results}) {
   return (
-    <div>
-      {results.map((result) => {
-        return <p>{result.ticker}</p>
-      })}
+    <div className='SearchResult'>
+      <ul className='SearchResultUl'>
+
+        {results.map((result) => {
+          return <li className='SearchResultList'>{result.ticker}</li>
+        })}
+      </ul>
     </div>
   );
 }

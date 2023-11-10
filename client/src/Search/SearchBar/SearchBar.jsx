@@ -2,7 +2,7 @@ import './SearchBar.css'
 
 function SearchBar({setSearch}) {
   return (
-    <div>
+    <div className='SearchBar'>
       <input 
         className='SearchBarInput'
         placeholder='Search'
