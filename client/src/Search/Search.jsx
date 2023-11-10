@@ -19,16 +19,15 @@ function Search() {
 
   if (tickers) {
     const results = tickers.filter((ticker) => {
-      if (search.length > 0) {
-        return ticker.ticker.toLowerCase().includes(search.toLowerCase());
-      }
-      return false;
+      return ticker.ticker.toLowerCase().startsWith(search.toLowerCase());
     })
-    
+    .slice(0,5);
+
     return (
       <div className='Search'>
         <SearchBar setSearch={setSearch} />
-        <SearchResult results={results} />
+        {(search.length > 0) &&
+        <SearchResult results={results} search={search} />}
       </div>
     );
   }
