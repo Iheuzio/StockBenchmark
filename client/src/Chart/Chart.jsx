@@ -41,13 +41,13 @@ function Chart() {
     const dataStringEnd2 = ticker2.data[ticker2.data.length - 1].timestamp.split('T')[0];
     const [dayEnd2, monthEnd2, yearEnd2] = dataStringEnd2.split('-');
     const dateEnd2 = new Date(yearEnd2, monthEnd2 - 1, dayEnd2);
-    const maxStartDate = Math.max(
+    const maxStartDate = Math.min(
       dateEnd.getTime(),
       dateEnd2.getTime()
     );
     console.log(maxStartDate);
 
-    const minEndDate = Math.min(
+    const minEndDate = Math.max(
       date1.getTime(),
       date2.getTime()
     );
@@ -74,7 +74,7 @@ function Chart() {
         return false;
       }
     );
-
+    console.log(filteredTickerData);
     const dates = filteredTickerData.map((row) => row.timestamp);
     console.log(dates);
     const adjustedClose = filteredTickerData.map((row) => row.adjustedClose);
