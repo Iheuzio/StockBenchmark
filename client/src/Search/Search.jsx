@@ -6,7 +6,8 @@ import burgerBar from '../images/burger-bar.png'
 import FollowOption from './FollowOption/FollowOption';
 
 function Search() {
-  const [tickers, setTickers] = useState(null);
+  const [allTickers, setAllTickers] = useState(null);
+  const [favTickers, setFavTickers] = useState(null);
   const [search, setSearch] = useState('');
   const [isFollowOption, setIsFollowOption] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
@@ -15,13 +16,29 @@ function Search() {
     const fetchTickers = async () => {
       const res = await fetch('/tickers');
       const json = await res.json();
-      setTickers(json);
+      setAllTickers(json);
     };
     fetchTickers();
   }, []);
 
+  useEffect(() => {
+    const getFavTickers = () => {
+      let storageTickers = localStorage.getItem('favTickers');
+      if (!storageTickers) {
+        storageTickers = []
+      }
+      setFavTickers(storageTickers);
+    }
+    getFavTickers();
+  }, []);
 
-  if (tickers) {
+  if ((allTickers && !isFollowOption) || (favTickers && isFollowOption)) {
+    let tickers;
+    if (isFollowOption) {
+      tickers = favTickers
+    } else {
+      tickers = allTickers
+    }
     let results = tickers.filter((ticker) => {
       return ticker.ticker.toLowerCase().startsWith(search.toLowerCase());
     });
