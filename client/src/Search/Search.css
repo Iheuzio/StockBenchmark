@@ -3,4 +3,21 @@
   flex-direction: column;
   justify-content: flex-start;
   width: 350px;
+  background-color: aliceblue;
+  border-radius: 20px;
+  float: right;
+  height: 100vh;
+}
+
+.SearchOptions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px 10px 0px;
+}
+
+.SearchImage {
+  height: 35px;
+  width: 35px;
+  margin-left: 5px;
 }

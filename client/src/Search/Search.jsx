@@ -2,6 +2,7 @@ import './Search.css'
 import { useEffect, useState } from 'react';
 import SearchBar from './SearchBar/SearchBar';
 import SearchResult from './SearchResult/SearchResult';
+import burgerBar from '../images/burger-bar.png'
 
 function Search() {
   const [tickers, setTickers] = useState(null);
@@ -27,13 +28,15 @@ function Search() {
                !results.includes(ticker);
       }));
     }
-    results = results.slice(0, 10);
 
     return (
       <div className='Search'>
-        <SearchBar setSearch={setSearch} />
-        {(search.length > 0) &&
-        <SearchResult results={results} search={search} />}
+        <div className='SearchOptions'>
+          <SearchBar setSearch={setSearch} />
+          
+          <img className='SearchImage' src={burgerBar} alt='' />
+        </div>
+        <SearchResult results={results} search={search} />
       </div>
     );
   }
