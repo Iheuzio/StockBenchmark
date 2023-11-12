@@ -1,12 +1,19 @@
-.Search {
+.SearchOn {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   width: 350px;
   background-color: aliceblue;
-  border-radius: 20px;
+  border-radius: 0 0 0 20px;
   float: right;
   height: 100vh;
+}
+
+.SearchOff {
+  float: right;
+  padding: 10px 10px 10px 15px;
+  background-color: aliceblue;
+  border-radius: 0 0 0 20px;
 }
 
 .SearchOptions {

@@ -9,6 +9,7 @@ function Search() {
   const [tickers, setTickers] = useState(null);
   const [search, setSearch] = useState('');
   const [isFollowOption, setIsFollowOption] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
 
   useEffect(() => {
     const fetchTickers = async () => {
@@ -32,16 +33,33 @@ function Search() {
     }
 
     return (
-      <div className='Search'>
-        <div className='SearchOptions'>
-          <SearchBar setSearch={setSearch} />
-          <FollowOption 
-            isFollowOption={isFollowOption}
-            setIsFollowOption={setIsFollowOption} />
-          <img className='SearchImage' src={burgerBar} alt='' />
-        </div>
-        <SearchResult results={results} search={search} />
-      </div>
+      <>
+        {isSearch ?
+          <div className='SearchOn'>
+            <div className='SearchOptions'>
+              <SearchBar setSearch={setSearch} />
+              <FollowOption 
+                isFollowOption={isFollowOption}
+                setIsFollowOption={setIsFollowOption} />
+              <img 
+                className='SearchImage' 
+                src={burgerBar} 
+                alt=''
+                onClick={() => setIsSearch(!isSearch)} />
+            </div>
+            <SearchResult results={results} search={search} />
+          </div>
+          :
+          <div 
+            className='SearchOff'
+            onClick={() => setIsSearch(!isSearch)}>
+            <img 
+              className='SearchImage' 
+              src={burgerBar} 
+              alt='' />
+          </div>
+        }
+      </>
     );
   }
 }
