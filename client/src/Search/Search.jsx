@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import SearchBar from './SearchBar/SearchBar';
 import SearchResult from './SearchResult/SearchResult';
 import burgerBar from '../images/burger-bar.png'
+import FollowOption from './FollowOption/FollowOption';
 
 function Search() {
   const [tickers, setTickers] = useState(null);
   const [search, setSearch] = useState('');
+  const [isFollowOption, setIsFollowOption] = useState(false);
 
   useEffect(() => {
     const fetchTickers = async () => {
@@ -33,7 +35,9 @@ function Search() {
       <div className='Search'>
         <div className='SearchOptions'>
           <SearchBar setSearch={setSearch} />
-          
+          <FollowOption 
+            isFollowOption={isFollowOption}
+            setIsFollowOption={setIsFollowOption} />
           <img className='SearchImage' src={burgerBar} alt='' />
         </div>
         <SearchResult results={results} search={search} />
