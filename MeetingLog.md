@@ -69,3 +69,50 @@ Note taker: Charles
 
 ## Images
 ![](https://media.discordapp.net/attachments/1166096642517241916/1172633857053425735/image.png?ex=65610762&is=654e9262&hm=de3d71480e8a2c16c33bed96e3acc50c3cee79ee095c0053ec6e35f6e3ac85d7&=&width=523&height=542)
+
+# 2023-11-12 Sunday, 1h, Online
+Attendees: Oni, Chris, Charles
+
+Note taker: Chris
+
+## Problems
+- Taking in multiple tickers
+- CORS not needed
+- Work division
+- Unit tests
+- Usability of graph on mobile
+
+## Discussion
+- Searching tickers is implemented, nothing on click yet
+- No state when it is ended. 
+- Hamburger menu showing items when clicked
+- Linked with the local storage (needs integration)
+- Show all the tickers fetched at the start (fetched all at once)
+- Followed button requires having the integration to localstorage
+- Unnessary component declared for single component rendering of the graph through a redirect
+- The commit with the unit tests was [here](https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/blob/eb923b31cd235eb86cc825b0e3e4c04a9d8420d7/server/__tests__/app.test.js)
+
+## Tasks
+    1. Implement adding ticker to watchlist
+    2. Link watchlist to localstorage
+    3. Alert dialogue when adding a ticker to watchlist
+    4. Link search list to chart plotly graphs to append tickers to render
+    5. Render only part of the list (filter by selected ticker)
+    6. Render special info on the side of each chart
+    7. Fix unit tests to use spyon & supertest
+    8. Mobile css for the graph to be minimally usable on a small screen (scale graph to viewport)
+
+## Extra
+- Fetch all tickers incrementally and lazy load the chart information based on 1D
+- Add functionality for drawing lines on graph and caching operations
+- Display additional information for weather each day
+- CSS for desktop and mobile implemented
+- Caching information relative to the names of tickers compared on graph together
+
+## Task Division
+
+Chris: Work on displaying 2 tickers, Link search list to plotly graphs
+
+Charles: Get chart to display correct viewport for device, implement a sidebar for additional information for stocks/route information
+
+Oni: Local storage caching for the tickers
