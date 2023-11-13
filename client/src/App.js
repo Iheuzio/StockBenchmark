@@ -3,9 +3,10 @@ import './App.css';
 import Chart from './Chart/Chart';
 
 function App() {
+  var tickers = ['RE', 'REGN', 'RF']
   return (
     <>
-      <Chart />
+    <Chart tickers={tickers} />
     </>
   );
 }
