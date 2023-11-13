@@ -1,6 +1,5 @@
 require('dotenv').config();
-const dbUrl = 'mongodb+srv://christopherbartos:Ojonm2NBQaS8MhWg@shareddb.iu56lnm.mongodb.net/\
-?retryWrites=true&w=majority';
+const dbUrl = process.env.ATLAS_URI;
 const { MongoClient } = require('mongodb');
 
 let instance = null;
