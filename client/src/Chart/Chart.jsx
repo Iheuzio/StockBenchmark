@@ -27,14 +27,18 @@ function Chart({ tickers }) {
     return (
       <div className="chart">
         <Plot
-          data={tickerData.map((ticker, index) => ({
-            x: commonDates,
-            y: getAdjustedCloseValues(ticker),
-            type: 'scatter',
-            mode: 'lines+markers',
-            marker: { color: getRandomColor() },
-            name: `Adjusted Close - ${tickers[index]}`,
-          }))}
+          data={tickerData.map((ticker, index) => {
+            const adjustedCloseValues = getAdjustedCloseValues(ticker);
+            const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
+            return {
+              x: commonDates,
+              y: relativePrices,
+              type: 'scatter',
+              mode: 'lines+markers',
+              marker: { color: getRandomColor() },
+              name: `Price Relative - ${tickers[index]}`,
+            };
+          })}
           layout={{ width: 1200, height: 600, title: `Stock Prices Comparison` }}
         />
       </div>
