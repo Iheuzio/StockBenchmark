@@ -111,7 +111,7 @@ Note taker: Chris
 
 ## Task Division
 
-Chris: Work on displaying 2 tickers, Link search list to plotly graphs
+Chris: Work on displaying 2 tickers
 
 Charles: Get chart to display correct viewport for device, implement a sidebar for additional information for stocks/route information
 
