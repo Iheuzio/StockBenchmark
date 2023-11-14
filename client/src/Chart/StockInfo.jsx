@@ -14,10 +14,9 @@ const StockInfo = ({ stockId }) => {
     <div>
       {stockInfo ? (
         <div>
+          {'Low,Open,Volume,High,Close,Adjusted Close'}
           <h2>{stockInfo.name}</h2>
-          <p>{stockInfo.description}</p>
-          <p>Price: {stockInfo.price}</p>
-          <p>Volume: {stockInfo.volume}</p>
+          <p>Volume: {stockInfo.Volume}</p>
         </div>
       ) : (
         <p>Loading...</p>

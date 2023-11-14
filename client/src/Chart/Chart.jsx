@@ -30,7 +30,6 @@ function Chart({ tickers }) {
   if (tickerData.length > 0) {
     const commonDates = getCommonDates(tickerData);
 
-    // plot the data
     const plotData = tickerData.map((ticker, index) => {
       const adjustedCloseValues = getAdjustedCloseValues(ticker);
       const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
@@ -46,10 +45,8 @@ function Chart({ tickers }) {
       return trace;
     });
 
-    // plot layout
     const layout = {
-      width: 1200,
-      height: 600,
+      autosize: true, // Let Plotly handle the size
       title: `Stock Prices Comparison`,
       updatemenus: [
         {
