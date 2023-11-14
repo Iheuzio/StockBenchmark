@@ -38,7 +38,7 @@ const path = require('path');
       
       dataToInsert.push({ ticker, data: dataset });
     }
-
+    console.log('Seeding database...');
     await db.createManyTickerData(dataToInsert);
     console.log('Successfully seeded');
     
