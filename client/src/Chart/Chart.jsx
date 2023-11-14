@@ -71,9 +71,13 @@ function Chart({ tickers }) {
       ],
     };
 
+    const config = {
+      responsive: true, 
+    };
+
     return (
       <div className="chart">
-        <Plot data={plotData} layout={layout} />
+        <Plot data={plotData} layout={layout} config={config} />
       </div>
     );
   }
