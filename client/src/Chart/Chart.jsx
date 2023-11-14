@@ -14,15 +14,8 @@ function Chart({ tickers }) {
 
   useEffect(() => {
     const fetchData = async (ticker) => {
-      // check to see if the ticker is already cached
-      const cachedTicker = localStorage.getItem(ticker);
-      if (cachedTicker) {
-        return JSON.parse(cachedTicker);
-      }
-      // otherwise we fetch
       const res = await fetch(`/tickers/${ticker}`);
       const json = await res.json();
-      localStorage.setItem(ticker, JSON.stringify(json));
       return json;
     };
 
