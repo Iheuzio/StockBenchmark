@@ -1,11 +1,13 @@
 import './App.css';
-// import Tickers from './Tickers/Tickers';
+import Search from './Search/Search';
 import Chart from './Chart/Chart';
 
 function App() {
+  var tickers = ['RE', 'REGN', 'RF']
   return (
     <>
-      <Chart />
+      <Search />
+      <Chart tickers={tickers} />
     </>
   );
 }

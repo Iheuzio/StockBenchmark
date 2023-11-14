@@ -1,132 +1,121 @@
-import './Chart.css'
+import React, { useState } from 'react';
+import './Chart.css';
 import Plot from 'react-plotly.js';
+import { useEffect } from 'react';
 
-import { useEffect, useState } from 'react';
-
-function Chart() {
-  const [ticker, setTicker] = useState(null);
-  const [ticker2, setTicker2] = useState(null);
+/**
+ * A component that displays a chart comparing the stock prices of multiple tickers.
+ * @param {Object} props - The component props.
+ * @param {string[]} props.tickers - An array of ticker symbols to compare.
+ * @returns {JSX.Element} - The Chart component.
+ */
+function Chart({ tickers }) {
+  const [tickerData, setTickerData] = useState([]);
 
   useEffect(() => {
-    const fetchTickers = async () => {
-      const res = await fetch('/tickers/SAXPF');
+    const fetchData = async (ticker) => {
+      const res = await fetch(`/tickers/${ticker}`);
       const json = await res.json();
-      setTicker(json);
-    };
-    fetchTickers();
-  }, []);
-
-  useEffect(() => {
-    const fetchTickers = async () => {
-      const res2 = await fetch('/tickers/UUGRY');
-      const json2 = await res2.json();
-      setTicker2(json2);
-    };
-    fetchTickers();
-  }, []);
-
-  if (ticker && ticker2) {
-    console.log(ticker.data[0].timestamp);
-    console.log(ticker2.data[0].timestamp);
-    const dateString = ticker.data[0].timestamp.split('T')[0];
-    const [day, month, year] = dateString.split('-');
-    const date1 = new Date(year, month - 1, day);
-    const dateString2 = ticker2.data[0].timestamp.split('T')[0];
-    const [day2, month2, year2] = dateString2.split('-');
-    const date2 = new Date(year2, month2 - 1, day2);
-    // get furthest end date
-    const dataStringEnd = ticker.data[ticker.data.length - 1].timestamp.split('T')[0];
-    const [dayEnd, monthEnd, yearEnd] = dataStringEnd.split('-');
-    const dateEnd = new Date(yearEnd, monthEnd - 1, dayEnd);
-    const dataStringEnd2 = ticker2.data[ticker2.data.length - 1].timestamp.split('T')[0];
-    const [dayEnd2, monthEnd2, yearEnd2] = dataStringEnd2.split('-');
-    const dateEnd2 = new Date(yearEnd2, monthEnd2 - 1, dayEnd2);
-    const maxStartDate = Math.min(
-      dateEnd.getTime(),
-      dateEnd2.getTime()
-    );
-    console.log(maxStartDate);
-
-    const minEndDate = Math.max(
-      date1.getTime(),
-      date2.getTime()
-    );
-    console.log(minEndDate);
-    const filteredTickerData = ticker.data.filter(
-      (row) => {
-        const rowtime = row.timestamp.split('T')[0];
-        const [day, month, year] = rowtime.split('-');
-        row = new Date(year, month - 1, day);
-        if (row.getTime() >= minEndDate && row.getTime() <= maxStartDate) {
-          return true;
-        }
-        return false;
-      }
-    );
-    const filteredTicker2Data = ticker2.data.filter(
-      (row) => {
-        const rowtime = row.timestamp.split('T')[0];
-        const [day, month, year] = rowtime.split('-');
-        row = new Date(year, month - 1, day);
-        if (row.getTime() >= minEndDate && row.getTime() <= maxStartDate) {
-          return true;
-        }
-        return false;
-      }
-    );
-    console.log(filteredTickerData);
-    const dates = filteredTickerData.map((row) => row.timestamp);
-    console.log(dates);
-    const adjustedClose = filteredTickerData.map((row) => row.adjustedClose);
-    const dates2 = filteredTicker2Data.map((row) => row.timestamp);
-    console.log(dates2);
-    const adjustedClose2 = filteredTicker2Data.map((row) => row.adjustedClose);
-
-    const percentageChange = (arr) => {
-      const result = [];
-      for (let i = 0; i < arr.length; i++) {
-        if (i === 0) {
-          result.push(0);
-        } else {
-          const diff = Math.log(arr[i] / arr[i - 1]);
-          result.push(diff * 100);
-        }
-      }
-      return result;
+      return json;
     };
 
-    const adjustedClosePercentage = percentageChange(adjustedClose);
-    const adjustedClose2Percentage = percentageChange(adjustedClose2);
+    const fetchAllTickers = async () => {
+      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker)));
+      setTickerData(data);
+    };
+
+    fetchAllTickers();
+  }, [tickers]);
+
+  if (tickerData.length > 0) {
+    const commonDates = getCommonDates(tickerData);
 
     // plot the data
+    const plotData = tickerData.map((ticker, index) => {
+      const adjustedCloseValues = getAdjustedCloseValues(ticker);
+      const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
+      const trace = {
+        x: commonDates,
+        y: relativePrices,
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { color: getRandomColor() },
+        name: `Price Relative - ${tickers[index]}`,
+      };
+
+      return trace;
+    });
+
+    // plot layout
+    const layout = {
+      width: 1200,
+      height: 600,
+      title: `Stock Prices Comparison`,
+      updatemenus: [
+        {
+          x: 0.1,
+          y: 1.15,
+          xref: 'paper',
+          yref: 'paper',
+          showactive: false,
+          buttons: [
+            {
+              method: 'relayout',
+              args: ['showlegend', true],
+              label: 'Show Legend',
+            },
+            {
+              method: 'relayout',
+              args: ['showlegend', false],
+              label: 'Hide Legend',
+            },
+          ],
+        },
+      ],
+    };
+
     return (
       <div className="chart">
-        <Plot
-          data={[
-            {
-              x: dates,
-              y: adjustedClose,
-              type: 'scatter',
-              mode: 'lines+markers',
-              marker: { color: 'blue' },
-              name: 'Adjusted Close',
-            },
-            {
-              x: dates2,
-              y: adjustedClose2,
-              type: 'scatter',
-              mode: 'lines+markers',
-              marker: { color: 'red' },
-              name: 'Adjusted Close',
-            },
-           
-          ]}
-          layout={{ width: 1200, height: 600, title: 'VUPPF' }}
-        />
+        <Plot data={plotData} layout={layout} />
       </div>
     );
-   
   }
+
+  return null;
 }
+
+
+/**
+ * Returns an array of common dates from an array of ticker data.
+ * @param {Array} tickerData - An array of ticker data.
+ * @returns {Array} An array of common dates.
+ */
+const getCommonDates = (tickerData) => {
+  const dates = tickerData.map((ticker) => ticker.data.map((row) => row.timestamp));
+  const intersection = dates.reduce((acc, curr) => acc.filter((date) => curr.includes(date)));
+  return Array.from(new Set(intersection.flat()));
+};
+
+/**
+ * Returns an array of adjusted close values for a given ticker.
+ * @param {Object} ticker - The ticker object containing data for a stock.
+ * @returns {Array} An array of adjusted close values.
+ */
+const getAdjustedCloseValues = (ticker) => {
+  return ticker.data.map((row) => row.adjustedClose);
+};
+
+/**
+ * Returns a random hex color code.
+ * @returns {string} A random hex color code.
+ */
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
 
 export default Chart;
