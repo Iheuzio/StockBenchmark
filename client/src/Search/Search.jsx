@@ -32,7 +32,7 @@ function Search({selectedTickers, setSelectedTickers}) {
     getFavTickers();
   }, []);
 
-  if ((allTickers && !isFollowOption) || (favTickers && isFollowOption)) {
+  if (allTickers || favTickers) {
     let tickers;
     if (isFollowOption) {
       tickers = favTickers
