@@ -20,31 +20,34 @@ function Chart({ tickers }) {
     };
 
     const fetchAllTickers = async () => {
-      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker)));
+      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
       setTickerData(data);
     };
 
     fetchAllTickers();
   }, [tickers]);
 
-  if (tickerData.length > 0) {
-    const commonDates = getCommonDates(tickerData);
-
-    // plot the data
-    const plotData = tickerData.map((ticker, index) => {
-      const adjustedCloseValues = getAdjustedCloseValues(ticker);
-      const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
-      const trace = {
-        x: commonDates,
-        y: relativePrices,
-        type: 'scatter',
-        mode: 'lines+markers',
-        marker: { color: getRandomColor() },
-        name: `Price Relative - ${tickers[index]}`,
-      };
-
-      return trace;
-    });
+  if (tickerData) {
+    let plotData = []
+    if (tickerData.length > 0) {
+      const commonDates = getCommonDates(tickerData);
+  
+      // plot the data
+      plotData = tickerData.map((ticker) => {
+        const adjustedCloseValues = getAdjustedCloseValues(ticker);
+        const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
+        const trace = {
+          x: commonDates,
+          y: relativePrices,
+          type: 'scatter',
+          mode: 'lines+markers',
+          marker: { color: ticker.color },
+          name: `Price Relative - ${ticker.ticker}`,
+        };
+  
+        return trace;
+      });
+    }
 
     // plot layout
     const layout = {
@@ -103,19 +106,6 @@ const getCommonDates = (tickerData) => {
  */
 const getAdjustedCloseValues = (ticker) => {
   return ticker.data.map((row) => row.adjustedClose);
-};
-
-/**
- * Returns a random hex color code.
- * @returns {string} A random hex color code.
- */
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
 };
 
 export default Chart;
