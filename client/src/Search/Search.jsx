@@ -24,20 +24,13 @@ function Search({setSelectedTickers}) {
       const res = await fetch('/tickers');
       const json = await res.json();
       setAllTickers(json);
-    };
-    fetchTickers();
-  }, []);
-
-  // Fetch list of all tickers name from localStorage
-  useEffect(() => {
-    const getFavTickers = () => {
       let storageTickers = localStorage.getItem('favTickers');
       if (!storageTickers) {
         storageTickers = []
       }
       setFavTickers(storageTickers);
-    }
-    getFavTickers();
+    };
+    fetchTickers();
   }, []);
 
   // If any data is fetched and the data's option is selected render
