@@ -5,7 +5,7 @@ import SearchResult from './SearchResult/SearchResult';
 import burgerBar from '../images/burger-bar.png'
 import FollowOption from './FollowOption/FollowOption';
 
-function Search() {
+function Search({selectedTickers, setSelectedTickers}) {
   const [allTickers, setAllTickers] = useState(null);
   const [favTickers, setFavTickers] = useState(null);
   const [search, setSearch] = useState('');
@@ -64,7 +64,7 @@ function Search() {
                 alt=''
                 onClick={() => setIsSearch(!isSearch)} />
             </div>
-            <SearchResult results={results} search={search} />
+            <SearchResult results={results} search={search} selectedTickers={selectedTickers} setSelectedTickers={setSelectedTickers} />
           </div>
           :
           <div 
