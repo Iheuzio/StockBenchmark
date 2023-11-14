@@ -1,12 +1,2 @@
-.chart {
-    width: 100%;
-    max-width: 1200px;
-  }
+
   
-  /* Add a media query for smaller screens */
-  @media only screen and (max-width: 768px) {
-    .chart {
-      width: 100%;
-      max-width: 300px; /* Adjust the max-width for smaller screens */
-    }
-  }

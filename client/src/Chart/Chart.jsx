@@ -11,6 +11,7 @@ import { useEffect } from 'react';
  */
 function Chart({ tickers }) {
   const [tickerData, setTickerData] = useState([]);
+  const [chartWidth, setChartWidth] = useState(0);
 
   useEffect(() => {
     const fetchData = async (ticker) => {
@@ -26,6 +27,24 @@ function Chart({ tickers }) {
 
     fetchAllTickers();
   }, [tickers]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidth = window.innerWidth * 0.9; // Adjust the multiplier as needed
+      setChartWidth(newWidth);
+    };
+
+    // Initial resize
+    handleResize();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   if (tickerData.length > 0) {
     const commonDates = getCommonDates(tickerData);
@@ -48,6 +67,7 @@ function Chart({ tickers }) {
     const layout = {
       autosize: true, // Let Plotly handle the size
       title: `Stock Prices Comparison`,
+      width: chartWidth,
       updatemenus: [
         {
           x: 0.1,
