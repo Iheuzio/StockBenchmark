@@ -20,13 +20,22 @@ function Chart({ tickers }) {
     };
 
     const fetchAllTickers = async () => {
+      const removedTickers = tickerData.filter((oldTicker) => tickers.filter((ticker) => ticker.ticker === oldTicker.ticker).length === 0);
       tickers.forEach(async (ticker) => {
         const isOldTicker = (tickerData.filter((oldTicker) => oldTicker.ticker === ticker.ticker).length > 0);
+        if (removedTickers.length > 0) {
+          setTickerData((oldTickers) => {
+            console.log(oldTickers.filter((oldTicker) => removedTickers.filter((removedTicker) => oldTicker.ticker === removedTicker.ticker) === 0))
+            return [oldTickers.filter((oldTicker) => removedTickers.filter((removedTicker) => oldTicker.ticker === removedTicker.ticker) === 0)]
+          })
+        }
         if (!isOldTicker) {
           const data = await fetchData(ticker.ticker);
-          setTickerData((oldTicker) => [...oldTicker, data])
+          setTickerData((oldTickers) => {
+            return [...oldTickers, data]
+          })
         }
-      })
+      });
     };
 
     fetchAllTickers();
