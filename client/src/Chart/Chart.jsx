@@ -20,13 +20,8 @@ function Chart({ tickers }) {
     };
 
     const fetchAllTickers = async () => {
-      tickers.forEach(async (ticker) => {
-        const isOldTicker = (tickerData.filter((oldTicker) => oldTicker.ticker === ticker.ticker).length > 0);
-        if (!isOldTicker) {
-          const data = await fetchData(ticker.ticker);
-          setTickerData((oldTicker) => [...oldTicker, data])
-        }
-      })
+      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
+      setTickerData(data);
     };
 
     fetchAllTickers();
