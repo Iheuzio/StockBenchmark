@@ -8,7 +8,7 @@ import parse from 'html-react-parser';
  * @param {useStateCallBack} setSelectedTickers - Callback function to set the current tickers selected
  * @returns {JSX.Element} - The SearchResult component.
  */
-function SearchResult({results, search, setSelectedTickers}) {
+function SearchResult({ results, search, setSelectedTickers }) {
   return (
     <div className='SearchResult'>
       <ul className='SearchResultUl'>
@@ -18,11 +18,22 @@ function SearchResult({results, search, setSelectedTickers}) {
           if (!ticker.match(regex)) {
             let formatTicker = ticker.replace(search.toUpperCase(), '<b>' + search.toUpperCase() + '</b>');
             return (
-              <li 
+              <li
                 key={result.ticker}
                 className='SearchResultList'
-                onClick={() => setSelectedTickers(oldTickers => [...oldTickers, ticker])}>
-                  {parse(formatTicker)}
+                onClick={() => {
+                  setSelectedTickers((oldTickers) => {
+                    if (oldTickers.includes(ticker)) {
+                      // If the ticker is already selected, remove it
+                      return oldTickers.filter((selectedTicker) => selectedTicker !== ticker);
+                    } else {
+                      // If the ticker is not selected, add it
+                      return [...oldTickers, ticker];
+                    }
+                  });
+                }}
+              >
+                {parse(formatTicker)}
               </li>
             );
           }
@@ -32,5 +43,6 @@ function SearchResult({results, search, setSelectedTickers}) {
     </div>
   );
 }
+
 
 export default SearchResult;

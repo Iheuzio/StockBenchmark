@@ -9,7 +9,7 @@ import { useEffect } from 'react';
  * @param {string[]} props.tickers - An array of ticker symbols to compare.
  * @returns {JSX.Element} - The Chart component.
  */
-function Chart({ tickers }) {
+function Chart({ tickers, removeTicker }) {
   const [tickerData, setTickerData] = useState([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function Chart({ tickers }) {
     };
 
     fetchAllTickers();
-  }, [tickers]);
+  }, [tickers, removeTicker]);
 
   if (tickerData.length > 0) {
     const commonDates = getCommonDates(tickerData);
