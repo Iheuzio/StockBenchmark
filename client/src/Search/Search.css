@@ -2,18 +2,22 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  width: 350px;
   background-color: aliceblue;
   border-radius: 0 0 0 20px;
-  float: right;
-  height: 100vh;
+  overflow-y: scroll;
+  max-height: 25vh;
+  max-width: 30vw;
+  position: absolute;
+  z-index: 1;
 }
 
 .SearchOff {
-  float: right;
   padding: 10px 10px 10px 15px;
   background-color: aliceblue;
   border-radius: 0 0 0 20px;
+  width:fit-content;
+  position: absolute;
+  z-index: 1;
 }
 
 .SearchOptions {
@@ -26,4 +30,11 @@
 .SearchImage {
   height: 35px;
   width: 35px;
+}
+
+@media screen and (max-width: 768px) {
+  .SearchOn {
+    max-width: 100vw;
+    font-size: larger;
+  }
 }
