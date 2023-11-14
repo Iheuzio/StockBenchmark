@@ -63,15 +63,15 @@ function Search({setSelectedTickers}) {
         {isSearch ?
           <div className='SearchOn'>
             <div className='SearchOptions'>
-              <SearchBar setSearch={setSearch} />
-              <FollowOption 
-                isFollowOption={isFollowOption}
-                setIsFollowOption={setIsFollowOption} />
-              <img 
+            <img 
                 className='SearchImage' 
                 src={burgerBar} 
                 alt=''
                 onClick={() => setIsSearch(!isSearch)} />
+              <SearchBar setSearch={setSearch} />
+              <FollowOption 
+                isFollowOption={isFollowOption}
+                setIsFollowOption={setIsFollowOption} />
             </div>
             <SearchResult results={results} search={search} setSelectedTickers={setSelectedTickers} />
           </div>

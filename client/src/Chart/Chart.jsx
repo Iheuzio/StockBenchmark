@@ -51,8 +51,9 @@ function Chart({ tickers }) {
 
     // plot layout
     const layout = {
-      width: 1200,
-      height: 600,
+      autosize: true,
+      width: Math.round(window.innerWidth * 0.9),
+      height: Math.round(window.innerHeight * 0.9),
       title: `Stock Prices Comparison`,
       updatemenus: [
         {
