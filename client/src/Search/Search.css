@@ -3,9 +3,8 @@
   flex-direction: column;
   justify-content: flex-start;
   background-color: aliceblue;
-  border-radius: 0 0 0 20px;
-  overflow-y: scroll;
-  max-height: 25vh;
+  border-radius: 0 0 20px 0;
+  max-height: 100vh;
   max-width: 30vw;
   position: absolute;
   z-index: 1;
@@ -14,7 +13,7 @@
 .SearchOff {
   padding: 10px 10px 10px 15px;
   background-color: aliceblue;
-  border-radius: 0 0 0 20px;
+  border-radius: 0 0 20px 0;
   width:fit-content;
   position: absolute;
   z-index: 1;
