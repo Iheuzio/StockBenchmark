@@ -116,3 +116,49 @@ Chris: Work on displaying 2 tickers
 Charles: Get chart to display correct viewport for device, implement a sidebar for additional information for stocks/route information
 
 Oni: Local storage caching for the tickers
+
+# 2023-11-12 Wednesday, 45min, In Person
+Attendees: Oni, Chris, Charles
+
+Note taker: Oni
+
+## Tasks
+Tests
+Check mark if ticker selected
+Add ticker to favorite
+CSS
+Date filters
+Performance
+- Caching
+	- Use headers (zip)
+- Favorite
+- Fetch only needed data
+- Fetch one ticker one at a time (no Promise.All)
+- LCP
+
+## Distribution
+Oni
+- Tests
+- CSS
+- Fetch only needed data
+- Fetch one ticker one at a time (no Promise.All)
+- Favorite
+- Add ticker to favorite
+
+Chris
+- Tests
+- CSS
+- Check mark
+- Caching
+
+Charles
+- Tests
+- CSS
+- Route use controller
+- Date filter
+- Favorite
+- Add ticker to favorite
+
+### For Milestone 2
+- Unit Tests
+- CSS if needed
