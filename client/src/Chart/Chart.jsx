@@ -11,7 +11,9 @@ import { useEffect } from 'react';
  */
 function Chart({ tickers }) {
   const [tickerData, setTickerData] = useState([]);
+  const [selectedTicker, setSelectedTicker] = useState(null);
   const [chartWidth, setChartWidth] = useState(0);
+  const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
 
   useEffect(() => {
     const fetchData = async (ticker) => {
@@ -30,21 +32,40 @@ function Chart({ tickers }) {
 
   useEffect(() => {
     const handleResize = () => {
-      const newWidth = window.innerWidth * 0.9; // Adjust the multiplier as needed
+      const newWidth = window.innerWidth * 0.9;
       setChartWidth(newWidth);
     };
 
-    // Initial resize
     handleResize();
 
-    // Add event listener for window resize
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  const handleTickerButtonClick = (ticker) => {
+    setSelectedTicker(ticker);
+    updateSelectedTickerInfo(ticker);
+  };
+
+  const handleShowAllButtonClick = () => {
+    setSelectedTicker(null);
+    setSelectedTickerInfo(null);
+  };
+
+  const updateSelectedTickerInfo = (ticker) => {
+    const selectedTickerData = tickerData.find((data) => data.ticker === ticker);
+    const adjustedCloseValues = getAdjustedCloseValues(selectedTickerData);
+    const highestPrice = Math.max(...adjustedCloseValues);
+    const lowestPrice = Math.min(...adjustedCloseValues);
+
+    setSelectedTickerInfo({
+      highestPrice,
+      lowestPrice,
+    });
+  };
 
   if (tickerData.length > 0) {
     const commonDates = getCommonDates(tickerData);
@@ -57,16 +78,17 @@ function Chart({ tickers }) {
         y: relativePrices,
         type: 'scatter',
         mode: 'lines+markers',
-        marker: { color: getRandomColor() },
+        marker: { color: selectedTicker === tickers[index] ? '#00F' : getRandomColor() },
         name: `Price Relative - ${tickers[index]}`,
+        visible: selectedTicker === null || selectedTicker === tickers[index],
       };
 
       return trace;
     });
 
     const layout = {
-      autosize: true, // Let Plotly handle the size
-      title: `Stock Prices Comparison`,
+      autosize: true,
+      title: `Stock Prices Comparison - ${selectedTicker || 'All Stocks'}`,
       width: chartWidth,
       updatemenus: [
         {
@@ -91,13 +113,29 @@ function Chart({ tickers }) {
       ],
     };
 
-    const config = {
-      responsive: true, 
-    };
-
     return (
       <div className="chart">
-        <Plot data={plotData} layout={layout} config={config} />
+        <div className="button-container">
+          <button onClick={handleShowAllButtonClick} className={selectedTicker === null ? 'active' : ''}>
+            Show All
+          </button>
+          {tickers.map((ticker) => (
+            <button
+              key={ticker}
+              onClick={() => handleTickerButtonClick(ticker)}
+              className={selectedTicker === ticker ? 'active' : ''}
+            >
+              {ticker}
+            </button>
+          ))}
+        </div>
+        <Plot data={plotData} layout={layout} />
+        {selectedTickerInfo && (
+          <div className="selected-ticker-info">
+            <p>Highest Price: ${selectedTickerInfo.highestPrice.toFixed(2)}</p>
+            <p>Lowest Price: ${selectedTickerInfo.lowestPrice.toFixed(2)}</p>
+          </div>
+        )}
       </div>
     );
   }
