@@ -12,7 +12,6 @@ import { useEffect } from 'react';
 function Chart({ tickers }) {
   const [tickerData, setTickerData] = useState([]);
   const [selectedTicker, setSelectedTicker] = useState(null);
-  const [chartWidth, setChartWidth] = useState(0);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
 
   useEffect(() => {
@@ -29,21 +28,6 @@ function Chart({ tickers }) {
 
     fetchAllTickers();
   }, [tickers]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const newWidth = window.innerWidth * 0.9;
-      setChartWidth(newWidth);
-    };
-
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   const handleTickerButtonClick = (ticker) => {
     setSelectedTicker(ticker);
