@@ -58,29 +58,44 @@ function Chart({ tickers }) {
     }
   };
 
-  if (tickerData && tickerData.length > 0) {
-    const commonDates = getCommonDates(tickerData);
-
-    const plotData = tickers.map((ticker, index) => {
-      const adjustedCloseValues = getAdjustedCloseValues(tickerData[index]);
-
-      if (adjustedCloseValues.length > 0) {
-        const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
-
-        return {
-          x: commonDates,
-          y: relativePrices,
-          type: 'scatter',
-          mode: 'lines+markers',
-          marker: { color: tickerData[index].color },
-          name: `Price Relative - ${ticker.ticker}`,
-          visible: selectedTicker === null || selectedTicker === ticker.ticker,
-        };
-      }
-
-      // Handle the case where adjustedCloseValues is empty
-      return null;
-    }).filter(Boolean); // Filter out null values
+  if (tickerData) {
+    let plotData = [];
+  
+    if (tickerData.length > 0) {
+      const commonDates = getCommonDates(tickerData);
+  
+      // Plot data for each selected stock
+      plotData = tickers.map((ticker, index) => {
+        const adjustedCloseValues = getAdjustedCloseValues(tickerData[index]);
+  
+        if (adjustedCloseValues.length > 0) {
+          const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
+  
+          return {
+            x: commonDates,
+            y: relativePrices,
+            type: 'scatter',
+            mode: 'lines+markers',
+            marker: { color: tickerData[index].color },
+            name: `Price Relative - ${ticker.ticker}`,
+            visible: selectedTicker === null || selectedTicker === ticker.ticker,
+          };
+        }
+  
+        // Handle the case where adjustedCloseValues is empty
+        return null;
+      }).filter(Boolean); // Filter out null values
+    } else {
+      // Default trace for an empty chart
+      plotData.push({
+        x: [/* provide default x values */],
+        y: [/* provide default y values */],
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { color: '#AAA' },  // or any default color you want
+        name: 'No Data Available',
+      });
+    }
 
     const layout = {
       autosize: true,
