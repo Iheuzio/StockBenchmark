@@ -5,13 +5,20 @@ import SearchResult from './SearchResult/SearchResult';
 import burgerBar from '../images/burger-bar.png'
 import FollowOption from './FollowOption/FollowOption';
 
-function Search() {
+/**
+ * Component that displays the search feature
+ * @param {useStateCallBack} setSelectedTickers - Callback function to set the current tickers selected
+ * @returns {JSX.Element} - The Search component.
+ */
+function Search({setSelectedTickers}) {
+  // Init State
   const [allTickers, setAllTickers] = useState(null);
   const [favTickers, setFavTickers] = useState(null);
   const [search, setSearch] = useState('');
   const [isFollowOption, setIsFollowOption] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
 
+  // Fetch list of all tickers name from server
   useEffect(() => {
     const fetchTickers = async () => {
       const res = await fetch('/tickers');
@@ -21,6 +28,7 @@ function Search() {
     fetchTickers();
   }, []);
 
+  // Fetch list of all tickers name from localStorage
   useEffect(() => {
     const getFavTickers = () => {
       let storageTickers = localStorage.getItem('favTickers');
@@ -32,6 +40,7 @@ function Search() {
     getFavTickers();
   }, []);
 
+  // If any data is fetched and the data's option is selected render
   if ((allTickers && !isFollowOption) || (favTickers && isFollowOption)) {
     let tickers;
     if (isFollowOption) {
@@ -54,17 +63,17 @@ function Search() {
         {isSearch ?
           <div className='SearchOn'>
             <div className='SearchOptions'>
-              <SearchBar setSearch={setSearch} />
-              <FollowOption 
-                isFollowOption={isFollowOption}
-                setIsFollowOption={setIsFollowOption} />
-              <img 
+            <img 
                 className='SearchImage' 
                 src={burgerBar} 
                 alt=''
                 onClick={() => setIsSearch(!isSearch)} />
+              <SearchBar setSearch={setSearch} />
+              <FollowOption 
+                isFollowOption={isFollowOption}
+                setIsFollowOption={setIsFollowOption} />
             </div>
-            <SearchResult results={results} search={search} />
+            <SearchResult results={results} search={search} setSelectedTickers={setSelectedTickers} />
           </div>
           :
           <div 

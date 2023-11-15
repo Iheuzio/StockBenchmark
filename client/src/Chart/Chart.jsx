@@ -23,7 +23,7 @@ function Chart({ tickers }) {
     };
 
     const fetchAllTickers = async () => {
-      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker)));
+      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
       setTickerData(data);
     };
 
@@ -66,30 +66,34 @@ function Chart({ tickers }) {
       lowestPrice,
     });
   };
-
-  if (tickerData.length > 0) {
-    const commonDates = getCommonDates(tickerData);
-
-    const plotData = tickerData.map((ticker, index) => {
-      const adjustedCloseValues = getAdjustedCloseValues(ticker);
-      const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
-      const trace = {
-        x: commonDates,
-        y: relativePrices,
-        type: 'scatter',
-        mode: 'lines+markers',
-        marker: { color: selectedTicker === tickers[index] ? '#00F' : getRandomColor() },
-        name: `Price Relative - ${tickers[index]}`,
-        visible: selectedTicker === null || selectedTicker === tickers[index],
-      };
-
-      return trace;
-    });
+  
+  if (tickerData) {
+    let plotData = []
+    if (tickerData.length > 0) {
+      const commonDates = getCommonDates(tickerData);
+  
+      // plot the data
+      plotData = tickerData.map((ticker) => {
+        const adjustedCloseValues = getAdjustedCloseValues(ticker);
+        const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
+        const trace = {
+          x: commonDates,
+          y: relativePrices,
+          type: 'scatter',
+          mode: 'lines+markers',
+          marker: { color: ticker.color },
+          name: `Price Relative - ${ticker.ticker}`,
+        };
+  
+        return trace;
+      });
+    }
 
     const layout = {
       autosize: true,
-      title: `Stock Prices Comparison - ${selectedTicker || 'All Stocks'}`,
-      width: chartWidth,
+      width: Math.round(window.innerWidth * 1),
+      height: Math.round(window.innerHeight * 0.9),
+      title: `Stock Prices Comparison`,
       updatemenus: [
         {
           x: 0.1,
@@ -121,11 +125,11 @@ function Chart({ tickers }) {
           </button>
           {tickers.map((ticker) => (
             <button
-              key={ticker}
-              onClick={() => handleTickerButtonClick(ticker)}
-              className={selectedTicker === ticker ? 'active' : ''}
+              key={ticker.ticker}
+              onClick={() => handleTickerButtonClick(ticker.ticker)}
+              className={selectedTicker === ticker.ticker ? 'active' : ''}
             >
-              {ticker}
+              {ticker.ticker}
             </button>
           ))}
         </div>
@@ -162,19 +166,6 @@ const getCommonDates = (tickerData) => {
  */
 const getAdjustedCloseValues = (ticker) => {
   return ticker.data.map((row) => row.adjustedClose);
-};
-
-/**
- * Returns a random hex color code.
- * @returns {string} A random hex color code.
- */
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
 };
 
 export default Chart;
