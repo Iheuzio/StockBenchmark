@@ -11,6 +11,8 @@ import { useEffect } from 'react';
  */
 function Chart({ tickers }) {
   const [tickerData, setTickerData] = useState([]);
+  const [selectedTicker, setSelectedTicker] = useState(null);
+  const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
 
   useEffect(() => {
     const fetchData = async (ticker) => {
@@ -41,6 +43,28 @@ function Chart({ tickers }) {
     fetchAllTickers();
   }, [tickers]);
 
+  const handleTickerButtonClick = (ticker) => {
+    setSelectedTicker(ticker);
+    updateSelectedTickerInfo(ticker);
+  };
+
+  const handleShowAllButtonClick = () => {
+    setSelectedTicker(null);
+    setSelectedTickerInfo(null);
+  };
+
+  const updateSelectedTickerInfo = (ticker) => {
+    const selectedTickerData = tickerData.find((data) => data.ticker === ticker);
+    const adjustedCloseValues = getAdjustedCloseValues(selectedTickerData);
+    const highestPrice = Math.max(...adjustedCloseValues);
+    const lowestPrice = Math.min(...adjustedCloseValues);
+
+    setSelectedTickerInfo({
+      highestPrice,
+      lowestPrice,
+    });
+  };
+  
   if (tickerData) {
     let plotData = []
     if (tickerData.length > 0) {
@@ -63,10 +87,10 @@ function Chart({ tickers }) {
       });
     }
 
-    // plot layout
     const layout = {
-      width: 1200,
-      height: 600,
+      autosize: true,
+      width: Math.round(window.innerWidth * 1),
+      height: Math.round(window.innerHeight * 0.9),
       title: `Stock Prices Comparison`,
       updatemenus: [
         {
@@ -93,7 +117,27 @@ function Chart({ tickers }) {
 
     return (
       <div className="chart">
+        <div className="button-container">
+          <button onClick={handleShowAllButtonClick} className={selectedTicker === null ? 'active' : ''}>
+            Show All
+          </button>
+          {tickers.map((ticker) => (
+            <button
+              key={ticker.ticker}
+              onClick={() => handleTickerButtonClick(ticker.ticker)}
+              className={selectedTicker === ticker.ticker ? 'active' : ''}
+            >
+              {ticker.ticker}
+            </button>
+          ))}
+        </div>
         <Plot data={plotData} layout={layout} />
+        {selectedTickerInfo && (
+          <div className="selected-ticker-info">
+            <p>Highest Price: ${selectedTickerInfo.highestPrice.toFixed(2)}</p>
+            <p>Lowest Price: ${selectedTickerInfo.lowestPrice.toFixed(2)}</p>
+          </div>
+        )}
       </div>
     );
   }
