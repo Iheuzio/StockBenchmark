@@ -117,7 +117,7 @@ Charles: Get chart to display correct viewport for device, implement a sidebar f
 
 Oni: Local storage caching for the tickers
 
-# 2023-11-12 Wednesday, 45min, In Person
+# 2023-11-15 Wednesday, 45min, In Person
 Attendees: Oni, Chris, Charles
 
 Note taker: Oni
