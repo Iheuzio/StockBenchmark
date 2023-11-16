@@ -5,8 +5,17 @@ const { MongoClient } = require('mongodb');
 let instance;
 
 class DB {
-  constructor(){
+  constructor(url){
     //instance is the singleton, defined in outer scope
+    if (url) {
+      if (!instance){
+        instance = this;
+        this.client = new MongoClient(url);
+        this.db = null;
+        this.collection = null;
+      }
+      return instance;
+    }
     if (!instance){
       instance = this;
       this.client = new MongoClient(dbUrl);
