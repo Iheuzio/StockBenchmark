@@ -24,7 +24,7 @@ function Chart({ tickers }) {
     const fetchAllTickers = async () => {
       const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
       setTickerData(data);
-    };
+    };    
 
     fetchAllTickers();
   }, [tickers]);
@@ -40,36 +40,60 @@ function Chart({ tickers }) {
   };
 
   const updateSelectedTickerInfo = (ticker) => {
-    const selectedTickerData = tickerData.find((data) => data.ticker === ticker);
-    const adjustedCloseValues = getAdjustedCloseValues(selectedTickerData);
-    const highestPrice = Math.max(...adjustedCloseValues);
-    const lowestPrice = Math.min(...adjustedCloseValues);
+    const tickerIndex = tickers.findIndex((t) => t.ticker === ticker);
+    const selectedTickerData = tickerData[tickerIndex];
 
-    setSelectedTickerInfo({
-      highestPrice,
-      lowestPrice,
-    });
+    if (selectedTickerData) {
+      const adjustedCloseValues = getAdjustedCloseValues(selectedTickerData);
+      const highestPrice = Math.max(...adjustedCloseValues);
+      const lowestPrice = Math.min(...adjustedCloseValues);
+
+      setSelectedTickerInfo({
+        highestPrice,
+        lowestPrice,
+      });
+    } else {
+      // Handle the case where selectedTickerData is not found
+      setSelectedTickerInfo(null);
+    }
   };
-  
+
   if (tickerData) {
-    let plotData = []
+    let plotData = [];
+  
     if (tickerData.length > 0) {
       const commonDates = getCommonDates(tickerData);
   
-      // plot the data
-      plotData = tickerData.map((ticker) => {
-        const adjustedCloseValues = getAdjustedCloseValues(ticker);
-        const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
-        const trace = {
-          x: commonDates,
-          y: relativePrices,
-          type: 'scatter',
-          mode: 'lines+markers',
-          marker: { color: ticker.color },
-          name: `Price Relative - ${ticker.ticker}`,
-        };
+      // Plot data for each selected stock
+      plotData = tickers.map((ticker, index) => {
+        const adjustedCloseValues = getAdjustedCloseValues(tickerData[index]);
   
-        return trace;
+        if (adjustedCloseValues.length > 0) {
+          const relativePrices = adjustedCloseValues.map((value) => value / adjustedCloseValues[0]);
+  
+          return {
+            x: commonDates,
+            y: relativePrices,
+            type: 'scatter',
+            mode: 'lines+markers',
+            marker: { color: tickerData[index].color },
+            name: `Price Relative - ${ticker.ticker}`,
+            visible: selectedTicker === null || selectedTicker === ticker.ticker,
+          };
+        }
+  
+        // Handle the case where adjustedCloseValues is empty
+        return null;
+      }).filter(Boolean); // Filter out null values
+    } else {
+      // Default trace for an empty chart
+      plotData.push({
+        x: [/* provide default x values */],
+        y: [/* provide default y values */],
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { color: '#AAA' },  // or any default color you want
+        name: 'No Data Available',
       });
     }
 
@@ -77,7 +101,7 @@ function Chart({ tickers }) {
       autosize: true,
       width: Math.round(window.innerWidth * 1),
       height: Math.round(window.innerHeight * 0.9),
-      title: `Stock Prices Comparison`,
+      title: `Stock Prices Comparison - ${selectedTicker || 'All Stocks'}`,
       updatemenus: [
         {
           x: 0.1,
@@ -149,7 +173,12 @@ const getCommonDates = (tickerData) => {
  * @returns {Array} An array of adjusted close values.
  */
 const getAdjustedCloseValues = (ticker) => {
-  return ticker.data.map((row) => row.adjustedClose);
+  if (ticker && ticker.data) {
+    return ticker.data.map((row) => row.adjustedClose);
+  } else {
+    return [];
+  }
 };
+
 
 export default Chart;
