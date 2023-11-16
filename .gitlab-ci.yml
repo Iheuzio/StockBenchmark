@@ -58,7 +58,9 @@ build-frontend:
 test:
   stage: test
   script:
-    - cd server && npm i && npm test
+    - cd server 
+    - npm i libcurl.so.4
+    - npm i && npm test
   only:
     refs:
       - main
