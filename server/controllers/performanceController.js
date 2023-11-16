@@ -7,7 +7,6 @@ const performanceController = {
       const tickers = await req.app.locals.db.findBestPerformingDays();
       res.json(tickers);
     } catch (error) {
-      console.error(error);
       res.status(404).json({ error: 'No data found' });
     }
   },
@@ -23,7 +22,6 @@ const performanceController = {
         res.status(404).json({ error: 'Ticker not found' });
       }
     } catch (error) {
-      console.error(error);
       res.status(404).json({ error: 'No data found' });
     }
   },
@@ -33,7 +31,6 @@ const performanceController = {
       const tickers = await req.app.locals.db.findWorstPerformingDays();
       res.json(tickers);
     } catch (error) {
-      console.error(error);
       res.status(404).json({ error: 'No data found' });
     }
   },
@@ -48,7 +45,6 @@ const performanceController = {
         res.status(404).json({ error: 'Ticker not found' });
       }
     } catch (error) {
-      console.error(error);
       res.status(404).json({ error: 'No data found' });
     }
   },
