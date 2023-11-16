@@ -11,7 +11,6 @@ router.get('/tickers', async (req, res) => {
     const tickers = await db.readAllTickers();
     res.json(tickers);
   } catch (error) {
-    console.error(error);
     res.status(404).json({ error: 'No data found' });
   }
 });
@@ -24,7 +23,6 @@ router.get('/tickers/:ticker', async (req, res) => {
     const tickerData = await db.readTickerData(ticker);
     res.json(tickerData);
   } catch (error) {
-    console.error(error);
     res.status(404).json({ error: 'No data found' });
   }
 });
