@@ -58,7 +58,10 @@ build-frontend:
 test:
   stage: test
   script:
-    - cd server && npm i && npm test
+    - apt-get update
+    - apt-get install libcurl4
+    - cd server 
+    - npm i && npm test
   only:
     refs:
       - main
