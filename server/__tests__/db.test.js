@@ -9,8 +9,7 @@ describe('DB', () => {
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
-    dbInstance = new DB();
-    dbInstance.client = new MongoClient(mongoUri);
+    dbInstance = new DB(mongoUri);
   });
   
   afterAll(async () => {
