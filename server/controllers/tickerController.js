@@ -7,7 +7,6 @@ const tickerController = {
       const tickers = await req.app.locals.db.readAllTickers();
       res.json(tickers);
     } catch (error) {
-      console.error(error);
       res.status(404).json({ error: 'No data found' });
     }
   },
@@ -23,7 +22,6 @@ const tickerController = {
         res.status(404).json({ error: 'Ticker not found' });
       }
     } catch (error) {
-      console.error(error);
       res.status(404).json({ error: 'No data found' });
     }
   },

@@ -2,7 +2,8 @@ require('dotenv').config();
 const dbUrl = process.env.ATLAS_URI;
 const { MongoClient } = require('mongodb');
 
-let instance = null;
+let instance;
+
 class DB {
   constructor(){
     //instance is the singleton, defined in outer scope
@@ -114,7 +115,7 @@ class DB {
         
         // Ensure open is greater than 0 to avoid division by zero
         if (open > 0) {
-          const percentage = ((close - open) / open) * 100;
+          const percentage = (close - open) / open * 100;
   
           if (percentage > maxPercentage) {
             maxPercentage = percentage;
@@ -178,7 +179,7 @@ class DB {
         
         // Ensure open is greater than 0 to avoid division by zero
         if (open > 0) {
-          const percentage = ((close - open) / open) * 100;
+          const percentage = (close - open) / open * 100;
   
           if (percentage < minPercentage) {
             minPercentage = percentage;
