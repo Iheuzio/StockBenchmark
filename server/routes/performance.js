@@ -10,7 +10,6 @@ router.get('/high/:stock', async (req, res) => {
     const bestTicker = await db.readBestPerformance(stock);
     res.json(bestTicker);
   } catch (error) {
-    console.error(error);
     res.status(404).json({ error: 'No data found' });
   }
 });
@@ -20,7 +19,6 @@ router.get('/highs', async (req, res) => {
     const bestTickers = await db.findBestPerformingDays();
     res.json(bestTickers);
   } catch (error) {
-    console.error(error);
     res.status(404).json({ error: 'No data found' });
   }
 });
@@ -31,7 +29,6 @@ router.get('/low/:stock', async (req, res) => {
     const worstTicker = await db.readWorstPerformance(stock);
     res.json(worstTicker);
   } catch (error) {
-    console.error(error);
     res.status(404).json({ error: 'No data found' });
   }
 });
@@ -41,7 +38,6 @@ router.get('/lows', async (req, res) => {
     const worstTickers = await db.findWorstPerformingDays();
     res.json(worstTickers);
   } catch (error) {
-    console.error(error);
     res.status(404).json({ error: 'No data found' });
   }
 });
