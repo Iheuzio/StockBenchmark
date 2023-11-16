@@ -58,7 +58,7 @@ build-frontend:
 test:
   stage: test
   script:
-    - cd server && npm test
+    - cd server && npm i && npm test
   only:
     refs:
       - main
