@@ -1,10 +1,15 @@
 import './App.css';
-import Tickers from './Tickers/Tickers';
+import Search from './Search/Search';
+import Chart from './Chart/Chart';
+import { useState } from 'react';
 
 function App() {
+  const [selectedTickers, setSelectedTickers] = useState([])
+  
   return (
     <>
-      <Tickers />
+      <Search selectedTickers={selectedTickers} setSelectedTickers={setSelectedTickers} />
+      <Chart tickers={selectedTickers} />
     </>
   );
 }

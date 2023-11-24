@@ -5,7 +5,7 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == 'staging'
-
+ 
 default:
   cache:  # Cache modules in between jobs for the same branch if package-lock.json file changes
     key: 
@@ -54,3 +54,16 @@ build-frontend:
     when: on_success
     paths:
       - client/build
+
+test:
+  stage: test
+  script:
+    - apt-get update
+    - apt-get install -y libcurl4
+    - cd server 
+    - npm i && npm test
+  only:
+    refs:
+      - main
+      - master
+      - staging
