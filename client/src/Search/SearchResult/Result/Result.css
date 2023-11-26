@@ -1,0 +1,17 @@
+.SearchResultList {
+  list-style: none;
+  padding: 5px 20px;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.SearchResultList:hover {
+  border-radius: 15px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.FollowImage{
+  width: 50px;
+}
