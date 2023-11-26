@@ -7,7 +7,6 @@ function Chart({ tickers }) {
   const [tickerData, setTickerData] = useState([]);
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Fetch data for all tickers when component mounts
@@ -24,15 +23,8 @@ function Chart({ tickers }) {
     };
 
     const fetchAllTickers = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
-        setTickerData(data.filter(Boolean)); // Filter out null values
-      } finally {
-        setLoading(false);
-      }
+      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
+      setTickerData(data);
     };
 
     fetchAllTickers();
@@ -57,12 +49,20 @@ function Chart({ tickers }) {
 
     if (selectedTickerData) {
       const adjustedCloseValues = getAdjustedCloseValues(selectedTickerData);
+
       const highestPrice = Math.max(...adjustedCloseValues);
       const lowestPrice = Math.min(...adjustedCloseValues);
+      const highestPriceIndex = adjustedCloseValues.indexOf(highestPrice);
+      const lowestPriceIndex = adjustedCloseValues.indexOf(lowestPrice);
+      const dates = selectedTickerData.data.map((row) => row.timestamp);
+      const highestPriceDate = dates[highestPriceIndex];
+      const lowestPriceDate = dates[lowestPriceIndex];
 
       setSelectedTickerInfo({
         highestPrice,
+        highestPriceDate,
         lowestPrice,
+        lowestPriceDate,
       });
     } else {
       setSelectedTickerInfo(null);
@@ -70,7 +70,7 @@ function Chart({ tickers }) {
   };
 
   // Prepare candlestick chart data
-  const candlestickData = selectedTicker
+  const candlestickData = selectedTicker === null
     ? tickerData
         .filter((ticker) => ticker.ticker === selectedTicker)
         .map((ticker) => ({
@@ -94,7 +94,7 @@ function Chart({ tickers }) {
         low: ticker.data.map((row) => row.low),
         open: ticker.data.map((row) => row.open),
         increasing: { line: { color: ticker.color } },
-          decreasing: { line: { color: `hsl(${(ticker.color + 180) % 360}, 100%, 50%)` } },
+        decreasing: { line: { color: `hsl(${(ticker.color + 180) % 360}, 100%, 50%)` } },
         type: 'candlestick',
         xaxis: 'x',
         yaxis: 'y',
@@ -102,13 +102,13 @@ function Chart({ tickers }) {
         visible: selectedTicker === null || selectedTicker === ticker.ticker,
       }));
 
- const layout = {
+  const layout = {
     autosize: true,
     dragmode: 'zoom',
     width: Math.round(window.innerWidth * 1),
     height: Math.round(window.innerHeight * 0.9),
     title: {
-      text: `Stock Prices Comparison - ${selectedTicker || tickerData ? 'All Stocks' : 'No Stocks Added'}`,
+      text: `${selectedTicker === null ? (tickerData.length === 0 ? 'No Stocks Added' : 'All Stocks') : selectedTicker}`,
       font: {
         family: 'Arial, sans-serif',
         size: 24,
@@ -135,8 +135,8 @@ function Chart({ tickers }) {
         xanchor: 'left',
         font: { size: 8 },
         buttons: [
-          { step: 'day', stepmode: 'backward', count: 7, label: '1 week' }, // Show only 7 days
-          { step: 'day', stepmode: 'backward', count: 14, label: '2 weeks' }, // Show only 14 days
+          { step: 'day', stepmode: 'backward', count: 7, label: '1 week' }, 
+          { step: 'day', stepmode: 'backward', count: 14, label: '2 weeks' }, 
           { step: 'all', label: 'All dates' },
         ],
       },
@@ -153,17 +153,57 @@ function Chart({ tickers }) {
     },
     paper_bgcolor: 'black',
     plot_bgcolor: 'black',
+    annotations: [], 
   };
 
   const config = {
     displayModeBar: false,
   };
 
+  // Add annotations for highest and lowest prices
+  if (selectedTickerInfo) {
+    const highestPriceAnnotation = {
+      x: selectedTickerInfo.highestPriceDate,
+      y: selectedTickerInfo.highestPrice,
+      xref: 'x',
+      yref: 'y',
+      text: `Highest Price: $${selectedTickerInfo.highestPrice.toFixed(2)}`,
+      showarrow: true,
+      arrowhead: 7,
+      ax: 0,
+      ay: -40,
+      font: {
+        family: 'Arial, sans-serif',
+        size: 14,
+        color: 'white',
+      },
+    };
+
+    const lowestPriceAnnotation = {
+      x: selectedTickerInfo.lowestPriceDate,
+      y: selectedTickerInfo.lowestPrice,
+      xref: 'x',
+      yref: 'y',
+      text: `Lowest Price: $${selectedTickerInfo.lowestPrice.toFixed(2)}`,
+      showarrow: true,
+      arrowhead: 7,
+      ax: 0,
+      ay: -20,
+      font: {
+        family: 'Arial, sans-serif',
+        size: 14,
+        color: 'white',
+      },
+    };
+
+    layout.annotations.push(highestPriceAnnotation);
+    layout.annotations.push(lowestPriceAnnotation);
+  }
+
   return (
     <div className="chart">
-      {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {!loading && !error && (
+      {!error && (
         <>
           <div className="button-container">
             <button onClick={handleShowAllButtonClick} className={selectedTicker === null ? 'active' : ''}>
@@ -201,7 +241,7 @@ const getCommonDates = (tickerData) => {
 
 const getAdjustedCloseValues = (ticker) => {
   if (ticker && ticker.data) {
-    return ticker.data.map((row) => row.adjustedClose);
+    return ticker.data.map((row) => row.close);
   } else {
     return [];
   }

@@ -21,7 +21,8 @@
 
 .SearchResultList:hover {
   border-radius: 15px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: lightblue;
+  color: black;
 }
 
 @media screen and (max-width: 768px) {
