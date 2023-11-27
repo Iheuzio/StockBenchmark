@@ -95,7 +95,7 @@ function Chart({ tickers }) {
         low: ticker.data.map((row) => row.low),
         open: ticker.data.map((row) => (row.open === 0 ? row.low : row.open)),
         increasing: { line: { color: colorScale[index % colorScale.length] } },
-        decreasing: { line: { color: colorScale[index % colorScale.length] } },
+        decreasing: { line: { color: colorScale.reverse()[index % colorScale.length] } },
         type: 'candlestick',
         xaxis: 'x',
         yaxis: 'y',
