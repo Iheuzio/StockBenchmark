@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
  * @param {useStateCallBack} setSelectedTickers - Callback function to set the current tickers selected
  * @returns {JSX.Element} - The SearchResult component.
  */
-function SearchResult({results, search, selectedTickers, setSelectedTickers}) {
+function SearchResult({results, search, isFollowOption, selectedTickers, setSelectedTickers}) {
   const [followList, setFollowList] = useState([]);
 
   useEffect(() => {
@@ -27,16 +27,31 @@ function SearchResult({results, search, selectedTickers, setSelectedTickers}) {
           const regex = /<|>|\//;
           if (!ticker.match(regex)) {
             let formatTicker = ticker.replace(search.toUpperCase(), '<b>' + search.toUpperCase() + '</b>');
-            return (
-              <Result 
-                key={result.ticker}
-                result={result} 
-                followList={followList}
-                setFollowList={setFollowList}
-                selectedTickers={selectedTickers}
-                setSelectedTickers={setSelectedTickers}
-                resultName={formatTicker} />
-            );
+            if (isFollowOption) {
+              if (followList.includes(result.ticker)) {
+                return (
+                  <Result 
+                    key={result.ticker}
+                    result={result} 
+                    followList={followList}
+                    setFollowList={setFollowList}
+                    selectedTickers={selectedTickers}
+                    setSelectedTickers={setSelectedTickers}
+                    resultName={formatTicker} />
+                );
+              }
+            } else {
+              return (
+                <Result 
+                  key={result.ticker}
+                  result={result} 
+                  followList={followList}
+                  setFollowList={setFollowList}
+                  selectedTickers={selectedTickers}
+                  setSelectedTickers={setSelectedTickers}
+                  resultName={formatTicker} />
+              );
+            }
           }
           return null;
         })}

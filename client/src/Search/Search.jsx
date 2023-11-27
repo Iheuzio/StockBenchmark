@@ -13,7 +13,6 @@ import FollowOption from './FollowOption/FollowOption';
 function Search({selectedTickers, setSelectedTickers}) {
   // Init State
   const [allTickers, setAllTickers] = useState(null);
-  const [favTickers, setFavTickers] = useState(null);
   const [search, setSearch] = useState('');
   const [isFollowOption, setIsFollowOption] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
@@ -28,31 +27,13 @@ function Search({selectedTickers, setSelectedTickers}) {
     fetchTickers();
   }, []);
 
-  // Fetch list of all tickers name from localStorage
-  useEffect(() => {
-    const getFavTickers = () => {
-      let storageTickers = localStorage.getItem('favTickers');
-      if (!storageTickers) {
-        storageTickers = []
-      }
-      setFavTickers(storageTickers);
-    }
-    getFavTickers();
-  }, []);
-
   // If any data is fetched and the data's option is selected render
-  if ((allTickers && !isFollowOption) || (favTickers && isFollowOption)) {
-    let tickers;
-    if (isFollowOption) {
-      tickers = favTickers
-    } else {
-      tickers = allTickers
-    }
-    let results = tickers.filter((ticker) => {
+  if (allTickers) {
+    let results = allTickers.filter((ticker) => {
       return ticker.ticker.toLowerCase().startsWith(search.toLowerCase());
     });
     if (results.length < 5) {
-      results = results.concat(tickers.filter((ticker) => {
+      results = results.concat(allTickers.filter((ticker) => {
         return ticker.ticker.toLowerCase().includes(search.toLowerCase()) &&
                !results.includes(ticker);
       }));
@@ -76,6 +57,7 @@ function Search({selectedTickers, setSelectedTickers}) {
             <SearchResult 
               results={results} 
               search={search} 
+              isFollowOption={isFollowOption}
               selectedTickers={selectedTickers}
               setSelectedTickers={setSelectedTickers} />
           </div>
