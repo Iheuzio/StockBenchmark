@@ -26,7 +26,6 @@ function Chart({ tickers }) {
       let newTickersName = [];
       tickersName.forEach((tick) => {
         if (tickerData.filter((data) => data.ticker === tick).length < 1) {
-          console.log("in")
           newTickersName = [...newTickersName, tick]
         }
       })
@@ -35,6 +34,9 @@ function Chart({ tickers }) {
     };    
 
     fetchAllTickers();
+    // Disable because I need to check old data to only fetch new data
+    // else the useEffect would trigger twice for nothing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tickers]);
 
   const handleTickerButtonClick = (ticker) => {
