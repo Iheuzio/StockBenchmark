@@ -74,6 +74,17 @@ function Search({selectedTickers, setSelectedTickers}) {
         }
       </>
     );
+  } else {
+    return (
+      <div 
+        className='SearchOff'
+        onClick={() => setIsSearch(!isSearch)}>
+        <img 
+          className='SearchImage' 
+          src={burgerBar} 
+          alt='' />
+      </div>
+    )
   }
 }
 
