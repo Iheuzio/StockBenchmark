@@ -7,6 +7,7 @@ function Chart({ tickers }) {
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
   const [error, setError] = useState(null);
+  const colorScale = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
 
   useEffect(() => {
     const fetchData = async (ticker) => {
@@ -85,7 +86,7 @@ function Chart({ tickers }) {
         return candlestick;
       });
     }
-    return tickerData.map((ticker) => {
+    return tickerData.map((ticker, index) => {
       const commonDates = getCommonDates(tickerData);
       const candlestick = {
         x: commonDates,
@@ -93,8 +94,8 @@ function Chart({ tickers }) {
         high: ticker.data.map((row) => row.high),
         low: ticker.data.map((row) => row.low),
         open: ticker.data.map((row) => (row.open === 0 ? row.low : row.open)),
-        increasing: { line: { color: ticker.color } },
-        decreasing: { line: { color: '#' + (0xffffff - parseInt(ticker.color?.substring(1), 16)).toString(16) } },
+        increasing: { line: { color: colorScale[index % colorScale.length] } },
+        decreasing: { line: { color: colorScale[index % colorScale.length] } },
         type: 'candlestick',
         xaxis: 'x',
         yaxis: 'y',
