@@ -10,7 +10,7 @@ import FollowOption from './FollowOption/FollowOption';
  * @param {useStateCallBack} setSelectedTickers - Callback function to set the current tickers selected
  * @returns {JSX.Element} - The Search component.
  */
-function Search({setSelectedTickers}) {
+function Search({selectedTickers, setSelectedTickers}) {
   // Init State
   const [allTickers, setAllTickers] = useState(null);
   const [favTickers, setFavTickers] = useState(null);
@@ -73,7 +73,11 @@ function Search({setSelectedTickers}) {
                 isFollowOption={isFollowOption}
                 setIsFollowOption={setIsFollowOption} />
             </div>
-            <SearchResult results={results} search={search} setSelectedTickers={setSelectedTickers} />
+            <SearchResult 
+              results={results} 
+              search={search} 
+              selectedTickers={selectedTickers}
+              setSelectedTickers={setSelectedTickers} />
           </div>
           :
           <div 

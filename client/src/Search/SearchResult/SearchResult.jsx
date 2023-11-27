@@ -1,5 +1,4 @@
 import './SearchResult.css';
-import parse from 'html-react-parser';
 import Result from './Result/Result';
 
 /**
@@ -9,7 +8,7 @@ import Result from './Result/Result';
  * @param {useStateCallBack} setSelectedTickers - Callback function to set the current tickers selected
  * @returns {JSX.Element} - The SearchResult component.
  */
-function SearchResult({results, search, setSelectedTickers}) {
+function SearchResult({results, search, selectedTickers, setSelectedTickers}) {
   return (
     <div className='SearchResult'>
       <ul className='SearchResultUl'>
@@ -20,9 +19,11 @@ function SearchResult({results, search, setSelectedTickers}) {
             let formatTicker = ticker.replace(search.toUpperCase(), '<b>' + search.toUpperCase() + '</b>');
             return (
               <Result 
+                key={result.ticker}
                 result={result} 
+                selectedTickers={selectedTickers}
                 setSelectedTickers={setSelectedTickers}
-                resultName={parse(formatTicker)} />
+                resultName={formatTicker} />
             );
           }
           return null;

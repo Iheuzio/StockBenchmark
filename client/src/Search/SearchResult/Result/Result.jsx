@@ -1,33 +1,43 @@
 import './Result.css';
 
+import parse from 'html-react-parser';
 import FollowImageOn from '../../../images/follow-on.png';
 import FollowImageOff from '../../../images/follow-off.png';
 import { useState } from 'react';
 
-function Result({result, setSelectedTickers, resultName}) {
+function Result({result, selectedTickers, setSelectedTickers, resultName}) {
   const [isFollowed, setIsFollowed] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
   return (
     <li 
       key={result.ticker}
       className='SearchResultList'
       onClick={() => {
-        setIsSelected((old) => !old)
         setSelectedTickers(oldTickers => {
           if (oldTickers.filter((oldTicker) => oldTicker.ticker === result.ticker).length > 0) {
             // If the ticker is already selected, remove it
             return oldTickers.filter((selectedTicker) => selectedTicker.ticker !== result.ticker);
           } else {
             // If the ticker is not selected, add it
-            return [...oldTickers, {ticker:result.ticker, color:getRandomColor()}];
+            return [...oldTickers, {
+              ticker:result.ticker, 
+              color:getRandomColor(),
+
+            }];
           }
         })}}>
-        <p>{resultName} {isSelected ? <>&#10003;</> : <></>}</p>
+        <p>
+          {parse(resultName)}
+          {
+            selectedTickers.length > 0 && 
+            selectedTickers.filter((selectTicker) => selectTicker.ticker === result.ticker).length > 0 &&
+            <>&#10003;</>
+          }
+        </p>
         <div 
           className='ImageDiv'
           onClick={(e) => {
             e.stopPropagation();
-            setIsFollowed((old) => !old)
+            setIsFollowed((old) => !old);
             }}>
           {isFollowed ?
             <img src={FollowImageOn} alt='' className='FollowImage' />
