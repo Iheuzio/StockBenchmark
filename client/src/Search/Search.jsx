@@ -7,6 +7,7 @@ import FollowOption from './FollowOption/FollowOption';
 
 /**
  * Component that displays the search feature
+ * @param {Object[]} selectedTickers - List of ticker Object that are currently displayed
  * @param {useStateCallBack} setSelectedTickers - Callback function to set the current tickers selected
  * @returns {JSX.Element} - The Search component.
  */

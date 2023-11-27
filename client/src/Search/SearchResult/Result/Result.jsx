@@ -4,8 +4,16 @@ import parse from 'html-react-parser';
 import FollowImageOn from '../../../images/follow-on.png';
 import FollowImageOff from '../../../images/follow-off.png';
 
+/**
+ * @param {Object} result - The Object of the current result
+ * @param {string[]} followList - List of the ticker name in that are followed
+ * @param {useStateCallBack} setFollowList - Callback function to set the list of followed tickers
+ * @param {Object[]} selectedTickers - List of ticker Object that are currently displayed
+ * @param {useStateCallBack} setSelectedTickers - Callback function to set the list of displayed tickers
+ * @param {string} resultName - The name of the displayed ticker with bold modifier
+ * @returns {JSX.Element} - The Result component.
+ */
 function Result({result, followList, setFollowList, selectedTickers, setSelectedTickers, resultName}) {
-  console.log(followList)
   return (
     <li 
       key={result.ticker}
@@ -26,6 +34,7 @@ function Result({result, followList, setFollowList, selectedTickers, setSelected
         <p>
           {parse(resultName)}
           {
+            // Add Checkmark if selected
             selectedTickers.length > 0 && 
             selectedTickers.filter((selectTicker) => selectTicker.ticker === result.ticker).length > 0 &&
             <>&#10003;</>
@@ -51,7 +60,9 @@ function Result({result, followList, setFollowList, selectedTickers, setSelected
             })
             }}>
           {
-          followList.filter((tickerName) => tickerName === result.ticker).length > 0 ?
+            // Toggle followed image
+            followList.includes(result.ticker) 
+            ?
             <img src={FollowImageOn} alt='' className='FollowImage' />
             :
             <img src={FollowImageOff} alt='' className='FollowImage' />
