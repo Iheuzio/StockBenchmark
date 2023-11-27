@@ -3,10 +3,9 @@ import './Result.css';
 import parse from 'html-react-parser';
 import FollowImageOn from '../../../images/follow-on.png';
 import FollowImageOff from '../../../images/follow-off.png';
-import { useState } from 'react';
 
-function Result({result, selectedTickers, setSelectedTickers, resultName}) {
-  const [isFollowed, setIsFollowed] = useState(false);
+function Result({result, followList, setFollowList, selectedTickers, setSelectedTickers, resultName}) {
+  console.log(followList)
   return (
     <li 
       key={result.ticker}
@@ -21,7 +20,6 @@ function Result({result, selectedTickers, setSelectedTickers, resultName}) {
             return [...oldTickers, {
               ticker:result.ticker, 
               color:getRandomColor(),
-
             }];
           }
         })}}>
@@ -37,9 +35,23 @@ function Result({result, selectedTickers, setSelectedTickers, resultName}) {
           className='ImageDiv'
           onClick={(e) => {
             e.stopPropagation();
-            setIsFollowed((old) => !old);
+            setFollowList((old) => {
+              let newList
+              if (old.length > 0) {
+                if (old.filter((tickerName) => tickerName === result.ticker).length > 0) {
+                  newList = old.filter((tickerName) => tickerName !== result.ticker);
+                } else {
+                  newList = [...old, result.ticker];
+                }
+              } else {
+                newList = [...old, result.ticker];
+              }
+              localStorage.setItem("followed", JSON.stringify(newList))
+              return newList;
+            })
             }}>
-          {isFollowed ?
+          {
+          followList.filter((tickerName) => tickerName === result.ticker).length > 0 ?
             <img src={FollowImageOn} alt='' className='FollowImage' />
             :
             <img src={FollowImageOff} alt='' className='FollowImage' />

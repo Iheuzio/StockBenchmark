@@ -15,3 +15,9 @@
 .FollowImage{
   width: 50px;
 }
+
+.ImageDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

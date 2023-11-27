@@ -1,5 +1,6 @@
 import './SearchResult.css';
 import Result from './Result/Result';
+import { useEffect, useState } from 'react';
 
 /**
  * Component that displays the search results
@@ -9,6 +10,15 @@ import Result from './Result/Result';
  * @returns {JSX.Element} - The SearchResult component.
  */
 function SearchResult({results, search, selectedTickers, setSelectedTickers}) {
+  const [followList, setFollowList] = useState([]);
+
+  useEffect(() => {
+    const followed = localStorage.getItem("followed");
+    if (followed) {
+      setFollowList(JSON.parse(followed));
+    }
+  }, []);
+
   return (
     <div className='SearchResult'>
       <ul className='SearchResultUl'>
@@ -21,6 +31,8 @@ function SearchResult({results, search, selectedTickers, setSelectedTickers}) {
               <Result 
                 key={result.ticker}
                 result={result} 
+                followList={followList}
+                setFollowList={setFollowList}
                 selectedTickers={selectedTickers}
                 setSelectedTickers={setSelectedTickers}
                 resultName={formatTicker} />
