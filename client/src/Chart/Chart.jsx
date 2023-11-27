@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './Chart.css';
 import Plot from 'react-plotly.js';
 
 function Chart({ tickers }) {
-  // State hooks
   const [tickerData, setTickerData] = useState([]);
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
   const [error, setError] = useState(null);
 
-  // Fetch data for all tickers when component mounts
   useEffect(() => {
     const fetchData = async (ticker) => {
       try {
@@ -30,77 +28,82 @@ function Chart({ tickers }) {
     fetchAllTickers();
   }, [tickers]);
 
-  // Handle button click for individual ticker
   const handleTickerButtonClick = (ticker) => {
     setSelectedTicker(ticker);
     updateSelectedTickerInfo(ticker);
   };
 
-  // Handle button click to show all tickers
   const handleShowAllButtonClick = () => {
     setSelectedTicker(null);
     setSelectedTickerInfo(null);
   };
 
-  // Update selected ticker information
   const updateSelectedTickerInfo = (ticker) => {
-    const tickerIndex = tickers.findIndex((t) => t.ticker === ticker);
-    const selectedTickerData = tickerData[tickerIndex];
+    const selectedTickerData = tickerData.find((t) => t.ticker === ticker);
 
     if (selectedTickerData) {
-      const adjustedCloseValues = getAdjustedCloseValues(selectedTickerData);
-
-      const highestPrice = Math.max(...adjustedCloseValues);
-      const lowestPrice = Math.min(...adjustedCloseValues);
-      const highestPriceIndex = adjustedCloseValues.indexOf(highestPrice);
-      const lowestPriceIndex = adjustedCloseValues.indexOf(lowestPrice);
+      const highestHigh = Math.max(...selectedTickerData.data.map((row) => row.high));
+      const lowestLow = Math.min(...selectedTickerData.data.map((row) => row.low));
+      const highestHighIndex = selectedTickerData.data.findIndex((row) => row.high === highestHigh);
+      const lowestLowIndex = selectedTickerData.data.findIndex((row) => row.low === lowestLow);
       const dates = selectedTickerData.data.map((row) => row.timestamp);
-      const highestPriceDate = dates[highestPriceIndex];
-      const lowestPriceDate = dates[lowestPriceIndex];
+      const highestHighDate = dates[highestHighIndex];
+      const lowestLowDate = dates[lowestLowIndex];
 
       setSelectedTickerInfo({
-        highestPrice,
-        highestPriceDate,
-        lowestPrice,
-        lowestPriceDate,
+        highestValue: highestHigh,
+        highestValueDate: highestHighDate,
+        lowestValue: lowestLow,
+        lowestValueDate: lowestLowDate,
       });
     } else {
       setSelectedTickerInfo(null);
     }
   };
 
-  // Prepare candlestick chart data
-  const candlestickData = selectedTicker === null
-    ? tickerData
-        .filter((ticker) => ticker.ticker === selectedTicker)
-        .map((ticker) => ({
-          x: getCommonDates([ticker]),
+  const candlestickData = useMemo(() => {
+    // check if selectedTicker then only show that ticker
+    // otherwise show all tickers
+    if(selectedTicker) {
+      const selectedTickerData = tickerData.filter((ticker) => ticker.ticker === selectedTicker);
+      return selectedTickerData.map((ticker) => {
+        const commonDates = getCommonDates(selectedTickerData);
+        const candlestick = {
+          x: commonDates,
           close: ticker.data.map((row) => row.close),
           high: ticker.data.map((row) => row.high),
           low: ticker.data.map((row) => row.low),
-          open: ticker.data.map((row) => row.open),
-          increasing: { line: { color: 'green' } },
-          decreasing: { line: { color: 'red' } },
+          open: ticker.data.map((row) => (row.open === 0 ? row.low : row.open)),
+          increasing: { line: { color: selectedTicker ? 'green' : ticker.color } },
+          decreasing: { line: { color: selectedTicker ? 'red' : '#' + (0xffffff - parseInt(ticker.color?.substring(1), 16)).toString(16) } },
           type: 'candlestick',
           xaxis: 'x',
           yaxis: 'y',
           name: `${ticker.ticker}`,
-          visible: selectedTicker === null || selectedTicker === ticker.ticker,
-        }))
-    : tickerData.map((ticker) => ({
-        x: getCommonDates(tickerData),
+        };
+  
+        return candlestick;
+      });
+    }
+    return tickerData.map((ticker) => {
+      const commonDates = getCommonDates(tickerData);
+      const candlestick = {
+        x: commonDates,
         close: ticker.data.map((row) => row.close),
         high: ticker.data.map((row) => row.high),
         low: ticker.data.map((row) => row.low),
-        open: ticker.data.map((row) => row.open),
-        increasing: { line: { color: ticker.color } },
-        decreasing: { line: { color: `hsl(${(ticker.color + 180) % 360}, 100%, 50%)` } },
+        open: ticker.data.map((row) => (row.open === 0 ? row.low : row.open)),
+        increasing: { line: { color: selectedTicker ? 'green' : ticker.color } },
+        decreasing: { line: { color: selectedTicker ? 'red' : '#' + (0xffffff - parseInt(ticker.color?.substring(1), 16)).toString(16) } },
         type: 'candlestick',
         xaxis: 'x',
         yaxis: 'y',
         name: `${ticker.ticker}`,
-        visible: selectedTicker === null || selectedTicker === ticker.ticker,
-      }));
+      };
+
+      return candlestick;
+    });
+  }, [tickerData, selectedTicker]);
 
   const layout = {
     autosize: true,
@@ -135,8 +138,8 @@ function Chart({ tickers }) {
         xanchor: 'left',
         font: { size: 8 },
         buttons: [
-          { step: 'day', stepmode: 'backward', count: 7, label: '1 week' }, 
-          { step: 'day', stepmode: 'backward', count: 14, label: '2 weeks' }, 
+          { step: 'day', stepmode: 'backward', count: 7, label: '1 week' },
+          { step: 'day', stepmode: 'backward', count: 14, label: '2 weeks' },
           { step: 'all', label: 'All dates' },
         ],
       },
@@ -144,6 +147,13 @@ function Chart({ tickers }) {
     },
     yaxis: {
       autorange: true,
+      title: 'Price',
+      titlefont: {
+        size: 18,
+        color: 'white',
+        family: 'Arial, sans-serif',
+        fontWeight: 700,
+      },
     },
     margin: {
       l: 80,
@@ -153,21 +163,16 @@ function Chart({ tickers }) {
     },
     paper_bgcolor: 'black',
     plot_bgcolor: 'black',
-    annotations: [], 
+    annotations: [],
   };
 
-  const config = {
-    displayModeBar: false,
-  };
-
-  // Add annotations for highest and lowest prices
   if (selectedTickerInfo) {
-    const highestPriceAnnotation = {
-      x: selectedTickerInfo.highestPriceDate,
-      y: selectedTickerInfo.highestPrice,
+    const highestValueAnnotation = {
+      x: selectedTickerInfo.highestValueDate,
+      y: selectedTickerInfo.highestValue,
       xref: 'x',
       yref: 'y',
-      text: `Highest Price: $${selectedTickerInfo.highestPrice.toFixed(2)}`,
+      text: `Highest Value: $${selectedTickerInfo.highestValue.toFixed(2)}`,
       showarrow: true,
       arrowhead: 7,
       ax: 0,
@@ -179,12 +184,12 @@ function Chart({ tickers }) {
       },
     };
 
-    const lowestPriceAnnotation = {
-      x: selectedTickerInfo.lowestPriceDate,
-      y: selectedTickerInfo.lowestPrice,
+    const lowestValueAnnotation = {
+      x: selectedTickerInfo.lowestValueDate,
+      y: selectedTickerInfo.lowestValue,
       xref: 'x',
       yref: 'y',
-      text: `Lowest Price: $${selectedTickerInfo.lowestPrice.toFixed(2)}`,
+      text: `Lowest Value: $${selectedTickerInfo.lowestValue.toFixed(2)}`,
       showarrow: true,
       arrowhead: 7,
       ax: 0,
@@ -196,8 +201,8 @@ function Chart({ tickers }) {
       },
     };
 
-    layout.annotations.push(highestPriceAnnotation);
-    layout.annotations.push(lowestPriceAnnotation);
+    layout.annotations.push(highestValueAnnotation);
+    layout.annotations.push(lowestValueAnnotation);
   }
 
   return (
@@ -219,11 +224,11 @@ function Chart({ tickers }) {
               </button>
             ))}
           </div>
-          <Plot data={candlestickData} layout={layout} config={config} />
+          <Plot data={candlestickData} layout={layout} config={{ displayModeBar: false }} />
           {selectedTickerInfo && (
             <div className="selected-ticker-info">
-              <p>Highest Price: ${selectedTickerInfo.highestPrice.toFixed(2)}</p>
-              <p>Lowest Price: ${selectedTickerInfo.lowestPrice.toFixed(2)}</p>
+              <p>Highest Value: ${selectedTickerInfo.highestValue.toFixed(2)}</p>
+              <p>Lowest Value: ${selectedTickerInfo.lowestValue.toFixed(2)}</p>
             </div>
           )}
         </>
@@ -237,14 +242,6 @@ const getCommonDates = (tickerData) => {
   const dates = tickerData.map((ticker) => ticker.data.map((row) => row.timestamp));
   const intersection = dates.reduce((acc, curr) => acc.filter((date) => curr.includes(date)));
   return Array.from(new Set(intersection.flat()));
-};
-
-const getAdjustedCloseValues = (ticker) => {
-  if (ticker && ticker.data) {
-    return ticker.data.map((row) => row.close);
-  } else {
-    return [];
-  }
 };
 
 export default Chart;
