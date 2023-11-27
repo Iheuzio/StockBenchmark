@@ -42,13 +42,17 @@ function Chart({ tickers }) {
     const selectedTickerData = tickerData.find((t) => t.ticker === ticker);
 
     if (selectedTickerData) {
+      const formattedDates = selectedTickerData.data.map((row) => {
+        const [day, month, year] = row.timestamp.split('-');
+        return new Date(`${month}-${day}-${year}`);
+      });
+
       const highestHigh = Math.max(...selectedTickerData.data.map((row) => row.high));
       const lowestLow = Math.min(...selectedTickerData.data.map((row) => row.low));
       const highestHighIndex = selectedTickerData.data.findIndex((row) => row.high === highestHigh);
       const lowestLowIndex = selectedTickerData.data.findIndex((row) => row.low === lowestLow);
-      const dates = selectedTickerData.data.map((row) => row.timestamp);
-      const highestHighDate = dates[highestHighIndex];
-      const lowestLowDate = dates[lowestLowIndex];
+      const highestHighDate = formattedDates[highestHighIndex];
+      const lowestLowDate = formattedDates[lowestLowIndex];
 
       setSelectedTickerInfo({
         highestValue: highestHigh,
@@ -65,11 +69,18 @@ function Chart({ tickers }) {
     // check if selectedTicker then only show that ticker
     // otherwise show all tickers
     if(selectedTicker) {
+      
       const selectedTickerData = tickerData.filter((ticker) => ticker.ticker === selectedTicker);
       return selectedTickerData.map((ticker) => {
         const commonDates = getCommonDates(selectedTickerData);
+        console.log(commonDates);
+        const formattedDates = commonDates.map((date) => {
+          const [day, month, year] = date.split('-');
+          return new Date(`${month}-${day}-${year}`);
+        });
+
         const candlestick = {
-          x: commonDates,
+          x: formattedDates,
           close: ticker.data.map((row) => row.close),
           high: ticker.data.map((row) => row.high),
           low: ticker.data.map((row) => row.low),
@@ -87,8 +98,13 @@ function Chart({ tickers }) {
     }
     return tickerData.map((ticker) => {
       const commonDates = getCommonDates(tickerData);
+      const formattedDates = commonDates.map((date) => {
+        const [day, month, year] = date.split('-');
+        return new Date(`${month}-${day}-${year}`);
+      });
+
       const candlestick = {
-        x: commonDates,
+        x: formattedDates,
         close: ticker.data.map((row) => row.close),
         high: ticker.data.map((row) => row.high),
         low: ticker.data.map((row) => row.low),
@@ -156,6 +172,8 @@ function Chart({ tickers }) {
         visible: true,
       },
       rangeslider_thickness: 0.1,
+      type:'date',
+      tickformat: '%d-%m-%Y'
     },
     yaxis: {
       autorange: true,
