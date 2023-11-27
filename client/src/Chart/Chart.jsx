@@ -16,14 +16,22 @@ function Chart({ tickers }) {
 
   useEffect(() => {
     const fetchData = async (ticker) => {
-      const res = await fetch(`/tickers/${ticker}`);
+      const res = await fetch(`/tickers/${ticker}`, {cache: 'no-cache'});
       const json = await res.json();
       return json;
     };
 
     const fetchAllTickers = async () => {
-      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
-      setTickerData(data);
+      let tickersName = tickers.map((tick) => tick.ticker);
+      let newTickersName = [];
+      tickersName.forEach((tick) => {
+        if (tickerData.filter((data) => data.ticker === tick).length < 1) {
+          console.log("in")
+          newTickersName = [...newTickersName, tick]
+        }
+      })
+      const data = await Promise.all(newTickersName.map((ticker) => fetchData(ticker)));
+      setTickerData((old) => old.concat(data));
     };    
 
     fetchAllTickers();
