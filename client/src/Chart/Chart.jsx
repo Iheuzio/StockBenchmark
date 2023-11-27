@@ -7,7 +7,7 @@ function Chart({ tickers }) {
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
   const [error, setError] = useState(null);
-  const colorScale = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
+  const colorScale = ['#1f77b4', '#bcbd22', '#2ca02c', '#7f7f7f', '#9467bd', '#e377c2', '#8c564b', '#d62728', '#ff7f0e', '#17becf'];
 
   useEffect(() => {
     const fetchData = async (ticker) => {
