@@ -4,13 +4,28 @@ import Plot from 'react-plotly.js';
 import useSWR from 'swr';
 import Draggable from 'react-draggable';
 
+/**
+ * Component that displays the chart
+ * @param {Object[]} tickers - List of ticker Object that are currently displayed
+ * @returns {JSX.Element} - The Chart component.
+ * @example
+ * <Chart tickers={"RE"} />
+ * 
+ */
 function Chart({ tickers }) {
+  // Init State
   const [tickerData, setTickerData] = useState([]);
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
   const [error, setError] = useState(null);
-
+  
   useEffect(() => {
+
+    /**
+     * Fetch month data for a ticker
+     * @param {string} ticker - The ticker to fetch data for
+     * @returns {Object} - The month data for the ticker
+    */
     const fetchData = async (ticker) => {
       try {
         const requestUrl = `/tickers/month/${ticker}`;
@@ -24,6 +39,29 @@ function Chart({ tickers }) {
       }
     };
 
+    /**
+      * Fetch full data for a ticker
+      * @param {string} ticker - The ticker to fetch data for
+      * @returns {Object} - The full data for the ticker
+      * @example
+      * const fullData = await fetchFullData("RE");
+      * console.log(fullData);
+      * // {
+      * //   ticker: "RE",
+      * //   data: [
+      * //     {
+      * //       timestamp: "01-01-2021",
+      * //       open: 0,
+      * //       high: 0,
+      * //       low: 0,
+      * //       close: 0,
+      * //       volume: 0,
+      * //     },
+      * //     ...
+      * //   ],
+      * //   color: "#000000",
+      * // }
+     */
     const fetchFullData = async (ticker) => {
       try {
         const requestUrl = `/tickers/${ticker}`;
@@ -37,10 +75,16 @@ function Chart({ tickers }) {
       }
     };
 
+    /**
+     * Fetch all tickers data
+     * @returns {Object[]} - The data for all tickers
+     */
     const fetchAllTickers = async () => {
+      // Initially fetch one month to have initial data even if the full data has not been fetched
       const monthData = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
       setTickerData(monthData);
 
+      // Fetch the full data in the background
       const fullData = await Promise.all(tickers.map((ticker) => fetchFullData(ticker.ticker)));
       setTickerData(fullData);
     };
@@ -50,6 +94,20 @@ function Chart({ tickers }) {
 
   const [showModal, setShowModal] = useState(false);
 
+  /**
+   * Handle ticker button click
+   * @param {string} ticker - The ticker to fetch data for
+   * @returns {void}
+   * @example
+   * <button onClick={() => handleTickerButtonClick("RE")}>RE</button>
+   * // Sets selectedTicker to "RE"
+   * // Sets selectedTickerInfo to {
+   * //   highestValue: 0,
+   * //   highestValueDate: "01-01-2021",
+   * //   lowestValue: 0,
+   * //   lowestValueDate: "01-01-2021",
+   * // }
+   */
   const handleTickerButtonClick = (ticker) => {
     setSelectedTicker(ticker);
     updateSelectedTickerInfo(ticker);
@@ -60,39 +118,102 @@ function Chart({ tickers }) {
     setShowModal(false);
   };
 
+  /**
+   * Handle show all button click
+   * @returns {void}
+   * @example
+   * <button onClick={handleShowAllButtonClick}>Show All</button>
+   * // Sets selectedTicker to null
+   * // Sets selectedTickerInfo to null
+   * // Sets layout.title.text to "All Stocks"
+   * // Sets layout.annotations to []
+   */
   const handleShowAllButtonClick = () => {
     setSelectedTicker(null);
     setSelectedTickerInfo(null);
     setShowModal(false);
   };
 
+  /**
+   * Update selected ticker info
+   * @param {string} ticker - The ticker to fetch data for
+   * @returns {void}
+   * @example
+   * updateSelectedTickerInfo("RE");
+   */
   const updateSelectedTickerInfo = (ticker) => {
     const selectedTickerData = tickerData.find((t) => t.ticker === ticker);
-
+  
     if (selectedTickerData) {
       const formattedDates = selectedTickerData.data.map((row) => {
         const [day, month, year] = row.timestamp.split('-');
         return new Date(`${month}-${day}-${year}`);
       });
-
+  
       const highestHigh = Math.max(...selectedTickerData.data.map((row) => row.high));
       const lowestLow = Math.min(...selectedTickerData.data.map((row) => row.low));
       const highestHighIndex = selectedTickerData.data.findIndex((row) => row.high === highestHigh);
       const lowestLowIndex = selectedTickerData.data.findIndex((row) => row.low === lowestLow);
       const highestHighDate = formattedDates[highestHighIndex];
       const lowestLowDate = formattedDates[lowestLowIndex];
-
+  
+      const rsi = calculateRSI(selectedTickerData.data);
+  
+      const fibonacciLevels = calculateFibonacciLevels(selectedTickerData.data);
+  
       setSelectedTickerInfo({
         highestValue: highestHigh,
         highestValueDate: highestHighDate,
         lowestValue: lowestLow,
         lowestValueDate: lowestLowDate,
+        rsi,
+        fibonacciLevels,
       });
     } else {
       setSelectedTickerInfo(null);
     }
   };
+  
+  const calculateRSI = (data) => {
+    data = data.slice(0, 14);
+    const up = [];
+    const down = [];
+    for(let i = 1; i < data.length; i++) {
+      const diff = data[i].close - data[i-1].close;
+      if(diff > 0) {
+        up.push(diff);
+      } else {
+        down.push(Math.abs(diff));
+      }
+    }
+    const avgUp = up.reduce((a, b) => a + b, 0) / up.length;
+    const avgDown = down.reduce((a, b) => a + b, 0) / down.length;
+    const rsiValue = 100 - (100 / (1 + (avgUp / avgDown)));
+    return rsiValue;
+  };
+  
+  const calculateFibonacciLevels = (data) => {
+    const highestHigh = Math.max(...data.map((row) => row.high));
+    const lowestLow = Math.min(...data.map((row) => row.low));
+    const fibonacciLevels = [];
+    fibonacciLevels.push(highestHigh);
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.236));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.382));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.5));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.618));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.786));
+    fibonacciLevels.push(lowestLow);
+    return fibonacciLevels;
+  };
+  
 
+  /**
+   * Fetch month data for a ticker
+   * @param {string} ticker - The ticker to fetch data for
+   * @returns {Object} - The month data for the ticker
+   * @example
+   * const monthData = await fetchData("RE");
+   */
   const { data: candlestickData } = useSWR([tickerData, selectedTicker], () => {
     // check if selectedTicker then only show that ticker
     // otherwise show all tickers
@@ -100,14 +221,9 @@ function Chart({ tickers }) {
       const selectedTickerData = tickerData.filter((ticker) => ticker.ticker === selectedTicker);
       return selectedTickerData.map((ticker) => {
         const commonDates = getCommonDates(selectedTickerData);
-        console.log(commonDates);
-        const formattedDates = commonDates.map((date) => {
-          const [day, month, year] = date.split('-');
-          return new Date(`${month}-${day}-${year}`);
-        });
 
         const candlestick = {
-          x: formattedDates,
+          x: commonDates,
           close: ticker.data.map((row) => row.close),
           high: ticker.data.map((row) => row.high),
           low: ticker.data.map((row) => row.low),
@@ -125,13 +241,13 @@ function Chart({ tickers }) {
     }
     return tickerData.map((ticker) => {
       const commonDates = getCommonDates(tickerData);
-      const formattedDates = commonDates.map((date) => {
-        const [day, month, year] = date.split('-');
-        return new Date(`${month}-${day}-${year}`);
-      });
 
+      /**
+       * Candlestick data for a ticker to be displayed on the chart
+       * @type {Object}
+       */
       const candlestick = {
-        x: formattedDates,
+        x: commonDates,
         close: ticker.data.map((row) => row.close),
         high: ticker.data.map((row) => row.high),
         low: ticker.data.map((row) => row.low),
@@ -148,6 +264,10 @@ function Chart({ tickers }) {
     });
   });
 
+  /**
+   * Layout for the chart, displays candle stick data
+   * @type {Object}
+   */
   const layout = {
     autosize: true,
     dragmode: 'zoom',
@@ -240,6 +360,7 @@ function Chart({ tickers }) {
   };
 
   if (selectedTickerInfo) {
+    // if selectedTickerInfo is not null, add annotations
     const highestValueAnnotation = {
       x: selectedTickerInfo.highestValueDate,
       y: selectedTickerInfo.highestValue,
@@ -312,7 +433,17 @@ function Chart({ tickers }) {
                 <div className="modal-body">
                   <p>Highest Value: ${selectedTickerInfo?.highestValue.toFixed(2)}</p>
                   <p>Lowest Value: ${selectedTickerInfo?.lowestValue.toFixed(2)}</p>
-                  {/* Add more information as needed */}
+                  {selectedTickerInfo?.rsi !== undefined && (
+                    <>
+                      <p>Relative Strength Index (RSI): {selectedTickerInfo?.rsi}</p>
+                      <p style={{ color: selectedTickerInfo?.rsi > 30 ? 'green' : 'red', fontWeight: 'bold' }}>
+                        {selectedTickerInfo?.rsi > 30 ? 'Bullish' : 'Bearish'}
+                      </p>
+                    </>
+                  )}
+                  <p>
+                    Fibonacci Levels: {selectedTickerInfo?.fibonacciLevels.join(', \n')}
+                  </p>
                 </div>
               </div>
             </Draggable>
@@ -323,11 +454,31 @@ function Chart({ tickers }) {
   );
 }
 
-// Utility functions
+/**
+ * Get the common dates from a list of tickers
+ * @param {Object[]} tickerData - List of ticker data
+ * @returns {string[]} - List of common dates
+ * @example
+ * const commonDates = getCommonDates(tickerData);
+ * console.log(commonDates);
+ * // valid
+ * // ["01-01-2021", "02-01-2021", "03-01-2021"]
+ * // invalid
+ * // ["01-01-2021", "02-01-2021", "03-01-2021", "04-01-2021"]
+ * // results:
+ * // ["01-01-2021", "02-01-2021", "03-01-2021"]
+ */
 const getCommonDates = (tickerData) => {
   const dates = tickerData.map((ticker) => ticker.data.map((row) => row.timestamp));
   const intersection = dates.reduce((acc, curr) => acc.filter((date) => curr.includes(date)));
-  return Array.from(new Set(intersection.flat()));
+  const commonDates = Array.from(new Set(intersection.flat()));
+
+  const formattedDates = commonDates.map((date) => {
+    const [day, month, year] = date.split('-');
+    return new Date(`${month}-${day}-${year}`);
+  });
+
+  return formattedDates;
 };
 
 export default Chart;
