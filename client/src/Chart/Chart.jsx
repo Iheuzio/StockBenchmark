@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Chart.css';
 import Plot from 'react-plotly.js';
 import useSWR from 'swr';
+import { Modal } from 'react-bootstrap';
+import Draggable from 'react-draggable';
 
 function Chart({ tickers }) {
   const [tickerData, setTickerData] = useState([]);
@@ -47,14 +49,22 @@ function Chart({ tickers }) {
     fetchAllTickers();
   }, [tickers]);
 
+  const [showModal, setShowModal] = useState(false);
+
   const handleTickerButtonClick = (ticker) => {
     setSelectedTicker(ticker);
     updateSelectedTickerInfo(ticker);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   const handleShowAllButtonClick = () => {
     setSelectedTicker(null);
     setSelectedTickerInfo(null);
+    setShowModal(false);
   };
 
   const updateSelectedTickerInfo = (ticker) => {
@@ -289,11 +299,24 @@ function Chart({ tickers }) {
             ))}
           </div>
           <Plot data={candlestickData} layout={layout} config={{ displayModeBar: false }} />
-          {selectedTickerInfo && (
-            <div className="selected-ticker-info">
-              <p>Highest Value: ${selectedTickerInfo.highestValue.toFixed(2)}</p>
-              <p>Lowest Value: ${selectedTickerInfo.lowestValue.toFixed(2)}</p>
-            </div>
+          
+          {/* Movable and resizable modal */}
+          {showModal && (
+            <Draggable>
+              <div className="modal-overlay">
+                <div className="modal-header">
+                  <button className="close-button" onClick={handleCloseModal}>
+                    &times;
+                  </button>
+                  <h4>{selectedTicker || 'All Stocks'} Additional Information</h4>
+                </div>
+                <div className="modal-body">
+                  <p>Highest Value: ${selectedTickerInfo?.highestValue.toFixed(2)}</p>
+                  <p>Lowest Value: ${selectedTickerInfo?.lowestValue.toFixed(2)}</p>
+                  {/* Add more information as needed */}
+                </div>
+              </div>
+            </Draggable>
           )}
         </>
       )}

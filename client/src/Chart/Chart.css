@@ -65,3 +65,35 @@
   outline: none;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
 }
+
+.modal-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: green;
+  padding: 20px;
+  z-index: 1000;
+  border: 1px solid #ccc;
+  max-width: 400px; /* Set a maximum width */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.close-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #aaa;
+}
+
+.close-button:hover {
+  color: #000;
+}
