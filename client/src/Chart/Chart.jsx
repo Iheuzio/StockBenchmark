@@ -68,30 +68,69 @@ function Chart({ tickers }) {
 
   const updateSelectedTickerInfo = (ticker) => {
     const selectedTickerData = tickerData.find((t) => t.ticker === ticker);
-
+  
     if (selectedTickerData) {
       const formattedDates = selectedTickerData.data.map((row) => {
         const [day, month, year] = row.timestamp.split('-');
         return new Date(`${month}-${day}-${year}`);
       });
-
+  
       const highestHigh = Math.max(...selectedTickerData.data.map((row) => row.high));
       const lowestLow = Math.min(...selectedTickerData.data.map((row) => row.low));
       const highestHighIndex = selectedTickerData.data.findIndex((row) => row.high === highestHigh);
       const lowestLowIndex = selectedTickerData.data.findIndex((row) => row.low === lowestLow);
       const highestHighDate = formattedDates[highestHighIndex];
       const lowestLowDate = formattedDates[lowestLowIndex];
-
+  
+      const rsi = calculateRSI(selectedTickerData.data);
+  
+      const fibonacciLevels = calculateFibonacciLevels(selectedTickerData.data);
+  
       setSelectedTickerInfo({
         highestValue: highestHigh,
         highestValueDate: highestHighDate,
         lowestValue: lowestLow,
         lowestValueDate: lowestLowDate,
+        rsi,
+        fibonacciLevels,
       });
     } else {
       setSelectedTickerInfo(null);
     }
   };
+  
+  const calculateRSI = (data) => {
+    data = data.slice(0, 14);
+    const up = [];
+    const down = [];
+    for(let i = 1; i < data.length; i++) {
+      const diff = data[i].close - data[i-1].close;
+      if(diff > 0) {
+        up.push(diff);
+      } else {
+        down.push(Math.abs(diff));
+      }
+    }
+    const avgUp = up.reduce((a, b) => a + b, 0) / up.length;
+    const avgDown = down.reduce((a, b) => a + b, 0) / down.length;
+    const rsiValue = 100 - (100 / (1 + (avgUp / avgDown)));
+    return rsiValue;
+  };
+  
+  const calculateFibonacciLevels = (data) => {
+    const highestHigh = Math.max(...data.map((row) => row.high));
+    const lowestLow = Math.min(...data.map((row) => row.low));
+    const fibonacciLevels = [];
+    fibonacciLevels.push(highestHigh);
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.236));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.382));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.5));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.618));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.786));
+    fibonacciLevels.push(lowestLow);
+    return fibonacciLevels;
+  };
+  
 
   const { data: candlestickData } = useSWR([tickerData, selectedTicker], () => {
     // check if selectedTicker then only show that ticker
@@ -312,7 +351,8 @@ function Chart({ tickers }) {
                 <div className="modal-body">
                   <p>Highest Value: ${selectedTickerInfo?.highestValue.toFixed(2)}</p>
                   <p>Lowest Value: ${selectedTickerInfo?.lowestValue.toFixed(2)}</p>
-                  {/* Add more information as needed */}
+                  <p>Relative Strength Index (RSI): {selectedTickerInfo?.rsi}</p>
+                  <p>Fibonacci Levels: {selectedTickerInfo?.fibonacciLevels.join(', ')}</p>
                 </div>
               </div>
             </Draggable>
