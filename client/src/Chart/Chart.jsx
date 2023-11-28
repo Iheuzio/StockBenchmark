@@ -12,7 +12,7 @@ function Chart({ tickers }) {
     const fetchData = async (ticker) => {
       try {
         const requestUrl = `/tickers/${ticker}`;
-        const res = await fetch(requestUrl, { cache: "no-cache"});
+        const res = await fetch(requestUrl, { cache: "force-cache"});
         const json = await res.json();
         json.color = tickers.find((t) => t.ticker === ticker).color;
         return json;
