@@ -1,5 +1,9 @@
 const express = require('express');
 const app = express();
+const compression = require('compression');
+
+// use compression express
+app.use(compression());
 
 // Import the tickerRoute and use it
 const tickerRoute = require('./routes/tickerData');
