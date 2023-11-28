@@ -77,7 +77,7 @@ Lead: Charles
   - Unknown
 
 ### Change 4 - Add intervals for dates selection
-Lead: Chris
+Lead: Christopher
 - Improve the aspect of day overviews by introducing buttons to select a range of dates
   - Solved, it increased the speed at which the graph was able to operate at. By having a shorter list of days to display, the app was much faster at the shorter rendered days.
     - This was likely due to having less children to render in the graph, removing overhead of unnessary nodes the user doesn't want to see.
@@ -88,9 +88,9 @@ Lead: Christopher
   - Solved, increased the speed of rendering of the graph, will no longer lock up when there is a wait time for the fetched data to be displayed.
     - This is probably due to using a smaller resource to cache the data initially and serving as a placeholder for a much larger dataset to be shown after a few more seconds.
 
-### <!-- Change n -->
+ <!--### Change n -->
 
-Lead: <!-- name main contributor to this change -->
+<!--Lead:  name main contributor to this change -->
 
 ## Conclusion
 <!-- Summarize which changes had the greatest impact, note any surprising results and list 2-3 main 
