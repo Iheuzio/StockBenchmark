@@ -9,11 +9,13 @@
 
 .SearchResultList:hover {
   border-radius: 15px;
-  background-color: rgba(0, 0, 0, 0.1);
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .FollowImage{
   width: 50px;
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
 }
 
 .ImageDiv {
