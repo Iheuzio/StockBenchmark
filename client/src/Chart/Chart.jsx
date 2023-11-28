@@ -351,8 +351,17 @@ function Chart({ tickers }) {
                 <div className="modal-body">
                   <p>Highest Value: ${selectedTickerInfo?.highestValue.toFixed(2)}</p>
                   <p>Lowest Value: ${selectedTickerInfo?.lowestValue.toFixed(2)}</p>
-                  <p>Relative Strength Index (RSI): {selectedTickerInfo?.rsi}</p>
-                  <p>Fibonacci Levels: {selectedTickerInfo?.fibonacciLevels.join(', ')}</p>
+                  {selectedTickerInfo?.rsi !== undefined && (
+                    <>
+                      <p>Relative Strength Index (RSI): {selectedTickerInfo?.rsi}</p>
+                      <p style={{ color: selectedTickerInfo?.rsi > 30 ? 'green' : 'red', fontWeight: 'bold' }}>
+                        {selectedTickerInfo?.rsi > 30 ? 'Bullish' : 'Bearish'}
+                      </p>
+                    </>
+                  )}
+                  <p>
+                    Fibonacci Levels: {selectedTickerInfo?.fibonacciLevels.join(', \n')}
+                  </p>
                 </div>
               </div>
             </Draggable>
