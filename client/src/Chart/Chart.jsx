@@ -11,7 +11,7 @@ function Chart({ tickers }) {
   useEffect(() => {
     const fetchData = async (ticker) => {
       try {
-        const requestUrl = `/tickers/${ticker}`;
+        const requestUrl = `/tickers/month/${ticker}`;
         const res = await fetch(requestUrl, { cache: "force-cache"});
         const json = await res.json();
         json.color = tickers.find((t) => t.ticker === ticker).color;
@@ -22,9 +22,25 @@ function Chart({ tickers }) {
       }
     };
 
+    const fetchFullData = async (ticker) => {
+      try {
+        const requestUrl = `/tickers/${ticker}`;
+        const res = await fetch(requestUrl, { cache: "force-cache"});
+        const json = await res.json();
+        json.color = tickers.find((t) => t.ticker === ticker).color;
+        return json;
+      } catch (error) {
+        setError(`Error fetching full data for ${ticker}: ${error.message}`);
+        return null;
+      }
+    };
+
     const fetchAllTickers = async () => {
-      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
-      setTickerData(data);
+      const monthData = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
+      setTickerData(monthData);
+
+      const fullData = await Promise.all(tickers.map((ticker) => fetchFullData(ticker.ticker)));
+      setTickerData(fullData);
     };
 
     fetchAllTickers();

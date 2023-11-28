@@ -26,6 +26,20 @@ const tickerController = {
     }
   },
 
+  getTickerThirtyDays: async (req, res) => {
+    const ticker = req.params.ticker;
+    try {
+      const tickerData = await req.app.locals.db.readTickerThirtyDays(ticker);
+      if (tickerData) {
+        res.json(tickerData);
+      } else {
+        res.status(404).json({ error: 'Ticker not found' });
+      }
+    } catch (error) {
+      res.status(404).json({ error: error });
+    }
+  },
+
 };
 
 module.exports = tickerController;
