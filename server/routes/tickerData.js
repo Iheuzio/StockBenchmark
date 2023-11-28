@@ -27,4 +27,14 @@ router.get('/tickers/:ticker', async (req, res) => {
   }
 });
 
+router.get('/tickers/temp/:ticker', async (req, res) => {
+  try {
+    const ticker = req.params.ticker;
+    const tickerData = await db.readTickerThirtyDays(ticker);
+    res.json(tickerData);
+  } catch (error) {
+    res.status(404).json({ error: error });
+  }
+});
+
 module.exports = router;

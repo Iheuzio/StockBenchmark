@@ -92,10 +92,27 @@ class DB {
     return await instance.collection.findOne({ ticker: ticker });
   }
 
+  async readTickerThirtyDays(ticker) {
+    const query = {
+      ticker: ticker
+    };
+  
+    const projection = {
+      _id: 0,
+      ticker: 1,
+      data: {
+        $slice: -30
+      }
+    };
+  
+    return await instance.collection.findOne(query, { projection: projection });
+  }
+
   async readAllTickers() {
     // return every ticker ticker: "ticker value" from all the items in the db
     return await instance.collection.find().project({ _id: 0, ticker: 1 }).toArray();
   }
+
 
   async readBestPerformance(stock) {
     const query = {
