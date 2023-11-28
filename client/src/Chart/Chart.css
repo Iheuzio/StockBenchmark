@@ -71,10 +71,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: darkgrey;
+  background-color: black;
   padding: 20px;
   z-index: 1000;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff;
   max-width: 400px; /* Set a maximum width */
   color: white; /* Text color */
 }
