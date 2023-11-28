@@ -4,7 +4,7 @@ import Chart from './Chart/Chart';
 import { useState } from 'react';
 
 function App() {
-  const [selectedTickers, setSelectedTickers] = useState([])
+  const [selectedTickers, setSelectedTickers] = useState([{ticker:'REPYY', color:""}])
   
   return (
     <>

@@ -11,7 +11,8 @@ function Chart({ tickers }) {
   useEffect(() => {
     const fetchData = async (ticker) => {
       try {
-        const res = await fetch(`/tickers/${ticker}`);
+        const requestUrl = `/tickers/${ticker}`;
+        const res = await fetch(requestUrl, { cache: "force-cache"});
         const json = await res.json();
         json.color = tickers.find((t) => t.ticker === ticker).color;
         return json;
