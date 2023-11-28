@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Chart.css';
 import Plot from 'react-plotly.js';
+import useSWR from 'swr';
 
 function Chart({ tickers }) {
   const [tickerData, setTickerData] = useState([]);
@@ -83,11 +84,10 @@ function Chart({ tickers }) {
     }
   };
 
-  const candlestickData = useMemo(() => {
+  const { data: candlestickData } = useSWR([tickerData, selectedTicker], () => {
     // check if selectedTicker then only show that ticker
     // otherwise show all tickers
     if(selectedTicker) {
-      
       const selectedTickerData = tickerData.filter((ticker) => ticker.ticker === selectedTicker);
       return selectedTickerData.map((ticker) => {
         const commonDates = getCommonDates(selectedTickerData);
@@ -137,7 +137,7 @@ function Chart({ tickers }) {
 
       return candlestick;
     });
-  }, [tickerData, selectedTicker]);
+  });
 
   const layout = {
     autosize: true,
