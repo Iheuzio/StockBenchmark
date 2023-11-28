@@ -75,6 +75,7 @@
   padding: 20px;
   z-index: 1000;
   border: 1px solid #ffffff;
+  border-radius: 10px;
   max-width: 400px; /* Set a maximum width */
   color: white; /* Text color */
 }
