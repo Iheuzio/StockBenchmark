@@ -162,3 +162,58 @@ Charles
 ### For Milestone 2
 - Unit Tests
 - CSS if needed
+
+# 2023-11-28 Tuesday, 30min, Online
+
+Attendees: 
+- Oni
+- Chris
+- Charles
+
+Note taker: 
+- Chris
+
+## Problems
+- CSS for Additional information needs css to seperate numbers from values
+- Refactor Chart.jsx into utility and plotly components
+- Complete Milestone 3 tasks
+- Add event listener to track window state size
+- Ensure that if a request is invalid, it will still show the graph
+- Ensure all errors in routes are handled
+
+## Discussion
+- Last Meeting before project submission, nailing out key issues with the app.
+- Form a list of tasks to get done by the group
+- Discuss several improvements and issues with hovering over a menu for css in the searchbar
+- Tags for labelling what was a stretch goal
+- Performance limitations with plotly as a library
+- Severside testing, how we should document it
+
+## Tasks & Work Division
+    [x] -> Completed prior to commencing meeting 
+
+    1. [ ] Plan of React components issue - Charles
+    2. [ ] Add tag to stretch goal issues - Charles
+    3. [ ] Deploy app - Chris
+    4. [ ] README setup - Chris
+    5. [x] gitlab CI - Oni
+    6. [ ] Documentation (incl Readme, Swagger for api, JSDoc, attributions)
+        - [ ] README - Oni
+        - [ ] Swagger - Oni
+        - [ ] JSDoc - Oni, Charles, Chris
+        - [ ] Attributions
+    7. [ ] Performance.md - Chris
+    8. [x] SWR instead of fetch - Chris
+    9. [ ] Client-side/React best-practices and code quality
+        - [x] Search - Oni
+        - [ ] Chart - Oni
+    10. [ ] Server-side best-practices and code quality - Oni, Chris
+    11. [x] Team meeting before deadline - Chris
+    12. [x] Test API - Chris
+    13. [ ] Report (changes contributor stuff made) - Oni, Chris, Charles
+
+## Extra
+- Improve performance further through optimizations.
+- Display a load screen when entering the website or adding stocks with a transition.
+- Improve css of certain window elements
+- Add event listener for window
