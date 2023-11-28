@@ -2,10 +2,9 @@ image: node:18.18-bullseye-slim
 
 workflow:
   rules:
-    # Temp change for testing
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    # - if: $CI_COMMIT_TAG
-    # - if: $CI_COMMIT_BRANCH == 'staging'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == 'staging'
  
 default:
   cache:  # Cache modules in between jobs for the same branch if package-lock.json file changes
@@ -44,11 +43,11 @@ build-frontend:
   script:
     - cd client && npm i
     - npm run build
-  # only:
-  #   refs:
-  #     - main
-  #     - master
-  #     - staging
+  only:
+    refs:
+      - main
+      - master
+      - staging
   artifacts:
     expire_in: 1 days
     when: on_success
@@ -74,8 +73,8 @@ build-app-archive:
     RELEASE_FILE: release-$CI_PROJECT_NAME-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA.tar.gz
   dependencies:
     - build-frontend
-  # rules:
-  #   if: $CI_COMMIT_TAG =~ /^v2\.[0-9]*\.[0-9]*$/
+  rules:
+    if: $CI_COMMIT_TAG =~ /^v2\.[0-9]*\.[0-9]*$/
   before_script:
     - cd client && npm ci --omit dev
     - cd ../server && npm ci --omit dev
@@ -87,8 +86,8 @@ build-app-archive:
     when: on_success
     paths:
       - ./$RELEASE_FILE
-  # only:
-  #   refs:
-  #     - main
-  #     - master
-  #     - staging
+  only:
+    refs:
+      - main
+      - master
+      - staging
