@@ -83,7 +83,7 @@ build-app-archive:
   artifacts:
     expire_in: 7 days
     when: on_success
-    path:
+    paths:
       - ./$RELEASE_FILE
   only:
     refs:
