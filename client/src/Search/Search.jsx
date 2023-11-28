@@ -28,7 +28,8 @@ function Search({selectedTickers, setSelectedTickers}) {
     fetchTickers();
   }, []);
 
-  // If any data is fetched and the data's option is selected render
+  // If any data is fetched and the data's option is selected render full component
+  // else render component collapsted
   if (allTickers) {
     let results = allTickers.filter((ticker) => {
       return ticker.ticker.toLowerCase().startsWith(search.toLowerCase());
@@ -76,9 +77,7 @@ function Search({selectedTickers, setSelectedTickers}) {
     );
   } else {
     return (
-      <div 
-        className='SearchOff'
-        onClick={() => setIsSearch(!isSearch)}>
+      <div className='SearchOff'>
         <img 
           className='SearchImage' 
           src={burgerBar} 

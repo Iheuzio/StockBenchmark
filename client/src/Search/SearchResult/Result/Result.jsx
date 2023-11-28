@@ -32,6 +32,9 @@ function Result({result, followList, setFollowList, selectedTickers, setSelected
           }
         })}}>
         <p>
+          {/* parse the name with html-react-parser to have the <b> tag to bold search
+           ** (data is sterialized in parent component) 
+           */}
           {parse(resultName)}
           {
             // Add Checkmark if selected
@@ -43,22 +46,20 @@ function Result({result, followList, setFollowList, selectedTickers, setSelected
         <div 
           className='ImageDiv'
           onClick={(e) => {
+            // OnClick update local storage with new list of followed tickers
             e.stopPropagation();
             setFollowList((old) => {
               let newList
-              if (old.length > 0) {
-                if (old.filter((tickerName) => tickerName === result.ticker).length > 0) {
-                  newList = old.filter((tickerName) => tickerName !== result.ticker);
-                } else {
-                  newList = [...old, result.ticker];
-                }
+              // add or remove ticker to followed if included or not
+              if (old.includes(result.ticker)) {
+                newList = old.filter((tickerName) => tickerName !== result.ticker);
               } else {
                 newList = [...old, result.ticker];
               }
               localStorage.setItem("followed", JSON.stringify(newList))
               return newList;
             })
-            }}>
+          }}>
           {
             // Toggle followed image
             followList.includes(result.ticker) 

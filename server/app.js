@@ -1,9 +1,29 @@
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const express = require('express');
 const app = express();
 const compression = require('compression');
 
 // use compression express
 app.use(compression());
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Stock Benchmark Express API',
+    version: '1.0.0',
+  },
+};
+
+const options = {
+  swaggerDefinition,
+  // Paths to files containing OpenAPI definitions
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Import the tickerRoute and use it
 const tickerRoute = require('./routes/tickerData');

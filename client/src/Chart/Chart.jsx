@@ -12,6 +12,7 @@ import useSWR from 'swr';
  * 
  */
 function Chart({ tickers }) {
+  // Init State
   const [tickerData, setTickerData] = useState([]);
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
@@ -78,9 +79,11 @@ function Chart({ tickers }) {
      * @returns {Object[]} - The data for all tickers
      */
     const fetchAllTickers = async () => {
+      // Initially fetch one month to have initial data even if the full data has not been fetched
       const monthData = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
       setTickerData(monthData);
 
+      // Fetch the full data in the background
       const fullData = await Promise.all(tickers.map((ticker) => fetchFullData(ticker.ticker)));
       setTickerData(fullData);
     };
