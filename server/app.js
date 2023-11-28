@@ -2,6 +2,10 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const express = require('express');
 const app = express();
+const compression = require('compression');
+
+// use compression express
+app.use(compression());
 
 const swaggerDefinition = {
   openapi: '3.0.0',
