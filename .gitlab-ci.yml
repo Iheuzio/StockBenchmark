@@ -87,8 +87,3 @@ build-app-archive:
     when: on_success
     paths:
       - ./$RELEASE_FILE
-  only:
-    refs:
-      - main
-      - master
-      - staging
