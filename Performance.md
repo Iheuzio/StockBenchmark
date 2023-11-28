@@ -83,7 +83,7 @@ Lead: Chris
     - This was likely due to having less children to render in the graph, removing overhead of unnessary nodes the user doesn't want to see.
 
 ### Change 5 - Fetch routes 30 days initially
-Lead: Chris
+Lead: Christopher
 - Improve the fetching speed of the data by isssuing a 30 day month data first, whilst waiting for the final dataset to be shown.
   - Solved, increased the speed of rendering of the graph, will no longer lock up when there is a wait time for the fetched data to be displayed.
     - This is probably due to using a smaller resource to cache the data initially and serving as a placeholder for a much larger dataset to be shown after a few more seconds.
