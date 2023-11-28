@@ -5,6 +5,27 @@ const DB = require('../db/db');
 const db = new DB();
 
 // Define route for /tickers
+/**
+ * @swagger
+ * /tickers:
+ *   get:
+ *     summary: Retrieve a list of all the tickers name
+ *     description: Retrive tickers name, can be used to get the name of available tickers
+ *     responses:
+ *       200:
+ *         description: List of Tickers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   ticker:
+ *                     type: string
+ *                     description: ticker name.
+ *                     example: RCRRF
+ */
 router.get('/tickers', async (req, res) => {
   // Access the database connection through app.locals or other methods
   try {
@@ -16,6 +37,16 @@ router.get('/tickers', async (req, res) => {
 });
 
 // Define route for /tickers/:ticker
+/**
+ * @swagger
+ * /tickers/:ticker:
+ *   get:
+ *     summary: Retrieve all info of :ticker
+ *     description: Retrive all info of :ticker by name
+ *     responce:
+ *       200:
+ *         description: List of Tickers
+ */
 router.get('/tickers/:ticker', async (req, res) => {
   // Access the database connection through app.locals or other methods
   try {
