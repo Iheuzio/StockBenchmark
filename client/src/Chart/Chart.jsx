@@ -23,20 +23,8 @@ function Chart({ tickers }) {
     };
 
     const fetchAllTickers = async () => {
-      let tickersName = tickers.map((tick) => tick.ticker);
-      let newTickersName = [];
-      tickersName.forEach((tick) => {
-        if (tickerData.filter((data) => data.ticker === tick).length < 1) {
-          newTickersName = [...newTickersName, tick];
-        }
-      })
-      const data = await Promise.all(newTickersName.map((ticker) => fetchData(ticker)));
-      setTickerData((old) => {
-        if (data.length > 0) {
-          return old.concat(data);
-        }
-        return old.filter((tick) => tickersName.filter((name) => name === tick.ticker).length > 0);
-      });
+      const data = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
+      setTickerData(data);
     };
 
     fetchAllTickers();
