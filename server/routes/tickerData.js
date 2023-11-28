@@ -24,6 +24,17 @@ const db = new DB();
  *                     type: string
  *                     description: ticker name.
  *                     example: RCRRF
+ *       404:
+ *         description: Ticker not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: error message
+ *                   example: No data found
  */
 router.get('/tickers', async (req, res) => {
   // Access the database connection through app.locals or other methods
