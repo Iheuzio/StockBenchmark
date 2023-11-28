@@ -3,13 +3,21 @@ import './Chart.css';
 import Plot from 'react-plotly.js';
 import useSWR from 'swr';
 
+/**
+ * All the Tickers information displayed using Plotly
+ * @param {Object[]} tickers - List of tickers Object that are currently displayed
+ * @returns {JSX.Element} - The Chart component.
+ */
 function Chart({ tickers }) {
+  // Init State
   const [tickerData, setTickerData] = useState([]);
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [selectedTickerInfo, setSelectedTickerInfo] = useState(null);
   const [error, setError] = useState(null);
 
+  // Fetch required data to display in the plot
   useEffect(() => {
+    // Fetches one mount of the data
     const fetchData = async (ticker) => {
       try {
         const requestUrl = `/tickers/month/${ticker}`;
@@ -23,6 +31,7 @@ function Chart({ tickers }) {
       }
     };
 
+    // Fetches the whole ticker
     const fetchFullData = async (ticker) => {
       try {
         const requestUrl = `/tickers/${ticker}`;
@@ -36,10 +45,13 @@ function Chart({ tickers }) {
       }
     };
 
+    // Fetch data of all the selected tickers
     const fetchAllTickers = async () => {
+      // Initially fetch one month to have initial data even if the full data has not been fetched
       const monthData = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
       setTickerData(monthData);
 
+      // Fetch the full data in the background
       const fullData = await Promise.all(tickers.map((ticker) => fetchFullData(ticker.ticker)));
       setTickerData(fullData);
     };
