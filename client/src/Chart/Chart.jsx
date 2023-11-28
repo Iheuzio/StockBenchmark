@@ -36,8 +36,8 @@ function Chart({ tickers }) {
     };
 
     const fetchAllTickers = async () => {
-      const tempData = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
-      setTickerData(tempData);
+      const monthData = await Promise.all(tickers.map((ticker) => fetchData(ticker.ticker)));
+      setTickerData(monthData);
 
       const fullData = await Promise.all(tickers.map((ticker) => fetchFullData(ticker.ticker)));
       setTickerData(fullData);
