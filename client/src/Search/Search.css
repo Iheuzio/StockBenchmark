@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background-color: aliceblue;
+  background-color: black;
   border-radius: 0 0 20px 0;
   max-height: 100vh;
   max-width: 30vw;
@@ -12,7 +12,7 @@
 
 .SearchOff {
   padding: 10px 10px 10px 15px;
-  background-color: aliceblue;
+  background-color: black;
   border-radius: 0 0 20px 0;
   width:fit-content;
   position: absolute;
@@ -29,6 +29,7 @@
 .SearchImage {
   height: 35px;
   width: 35px;
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
 }
 
 @media screen and (max-width: 768px) {
