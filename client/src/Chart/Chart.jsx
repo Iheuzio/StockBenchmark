@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Chart.css';
 import Plot from 'react-plotly.js';
 import useSWR from 'swr';
+import Draggable from 'react-draggable';
 
 /**
  * Component that displays the chart
@@ -91,6 +92,8 @@ function Chart({ tickers }) {
     fetchAllTickers();
   }, [tickers]);
 
+  const [showModal, setShowModal] = useState(false);
+
   /**
    * Handle ticker button click
    * @param {string} ticker - The ticker to fetch data for
@@ -108,6 +111,11 @@ function Chart({ tickers }) {
   const handleTickerButtonClick = (ticker) => {
     setSelectedTicker(ticker);
     updateSelectedTickerInfo(ticker);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   /**
@@ -123,6 +131,7 @@ function Chart({ tickers }) {
   const handleShowAllButtonClick = () => {
     setSelectedTicker(null);
     setSelectedTickerInfo(null);
+    setShowModal(false);
   };
 
   /**
@@ -134,30 +143,69 @@ function Chart({ tickers }) {
    */
   const updateSelectedTickerInfo = (ticker) => {
     const selectedTickerData = tickerData.find((t) => t.ticker === ticker);
-
+  
     if (selectedTickerData) {
       const formattedDates = selectedTickerData.data.map((row) => {
         const [day, month, year] = row.timestamp.split('-');
         return new Date(`${month}-${day}-${year}`);
       });
-
+  
       const highestHigh = Math.max(...selectedTickerData.data.map((row) => row.high));
       const lowestLow = Math.min(...selectedTickerData.data.map((row) => row.low));
       const highestHighIndex = selectedTickerData.data.findIndex((row) => row.high === highestHigh);
       const lowestLowIndex = selectedTickerData.data.findIndex((row) => row.low === lowestLow);
       const highestHighDate = formattedDates[highestHighIndex];
       const lowestLowDate = formattedDates[lowestLowIndex];
-
+  
+      const rsi = calculateRSI(selectedTickerData.data);
+  
+      const fibonacciLevels = calculateFibonacciLevels(selectedTickerData.data);
+  
       setSelectedTickerInfo({
         highestValue: highestHigh,
         highestValueDate: highestHighDate,
         lowestValue: lowestLow,
         lowestValueDate: lowestLowDate,
+        rsi,
+        fibonacciLevels,
       });
     } else {
       setSelectedTickerInfo(null);
     }
   };
+  
+  const calculateRSI = (data) => {
+    data = data.slice(0, 14);
+    const up = [];
+    const down = [];
+    for(let i = 1; i < data.length; i++) {
+      const diff = data[i].close - data[i-1].close;
+      if(diff > 0) {
+        up.push(diff);
+      } else {
+        down.push(Math.abs(diff));
+      }
+    }
+    const avgUp = up.reduce((a, b) => a + b, 0) / up.length;
+    const avgDown = down.reduce((a, b) => a + b, 0) / down.length;
+    const rsiValue = 100 - (100 / (1 + (avgUp / avgDown)));
+    return rsiValue;
+  };
+  
+  const calculateFibonacciLevels = (data) => {
+    const highestHigh = Math.max(...data.map((row) => row.high));
+    const lowestLow = Math.min(...data.map((row) => row.low));
+    const fibonacciLevels = [];
+    fibonacciLevels.push(highestHigh);
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.236));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.382));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.5));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.618));
+    fibonacciLevels.push(highestHigh - ((highestHigh - lowestLow) * 0.786));
+    fibonacciLevels.push(lowestLow);
+    return fibonacciLevels;
+  };
+  
 
   /**
    * Fetch month data for a ticker
@@ -370,12 +418,35 @@ function Chart({ tickers }) {
               </button>
             ))}
           </div>
-          <Plot data={candlestickData} layout={layout} config={{ displayModeBar: false, useWebGL: true }} />
-          {selectedTickerInfo && (
-            <div className="selected-ticker-info">
-              <p>Highest Value: ${selectedTickerInfo.highestValue.toFixed(2)}</p>
-              <p>Lowest Value: ${selectedTickerInfo.lowestValue.toFixed(2)}</p>
-            </div>
+          <Plot data={candlestickData} layout={layout} config={{ displayModeBar: false }} />
+          
+          {/* Movable and resizable modal */}
+          {showModal && (
+            <Draggable>
+              <div className="modal-overlay">
+                <div className="modal-header">
+                  <button className="close-button" onClick={handleCloseModal}>
+                    &times;
+                  </button>
+                  <h4>{selectedTicker || 'All Stocks'} Additional Information</h4>
+                </div>
+                <div className="modal-body">
+                  <p>Highest Value: ${selectedTickerInfo?.highestValue.toFixed(2)}</p>
+                  <p>Lowest Value: ${selectedTickerInfo?.lowestValue.toFixed(2)}</p>
+                  {selectedTickerInfo?.rsi !== undefined && (
+                    <>
+                      <p>Relative Strength Index (RSI): {selectedTickerInfo?.rsi}</p>
+                      <p style={{ color: selectedTickerInfo?.rsi > 30 ? 'green' : 'red', fontWeight: 'bold' }}>
+                        {selectedTickerInfo?.rsi > 30 ? 'Bullish' : 'Bearish'}
+                      </p>
+                    </>
+                  )}
+                  <p>
+                    Fibonacci Levels: {selectedTickerInfo?.fibonacciLevels.join(', \n')}
+                  </p>
+                </div>
+              </div>
+            </Draggable>
           )}
         </>
       )}

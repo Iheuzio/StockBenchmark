@@ -65,3 +65,45 @@
   outline: none;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
 }
+
+.modal-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: black;
+  padding: 20px;
+  z-index: 1000;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  max-width: 400px; /* Set a maximum width */
+  color: white; /* Text color */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.close-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #aaa;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+/* Additional styling for modal body content */
+.modal-body {
+  line-height: 1.4; /* Adjust line height for better readability */
+  font-size: 16px; /* Adjust font size */
+  white-space: pre-line; /* Allow line breaks */
+}
+
