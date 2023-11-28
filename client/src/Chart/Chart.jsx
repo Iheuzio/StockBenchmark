@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './Chart.css';
 import Plot from 'react-plotly.js';
 import useSWR from 'swr';
-import { Modal } from 'react-bootstrap';
 import Draggable from 'react-draggable';
 
 function Chart({ tickers }) {
