@@ -2,11 +2,6 @@
 
 ## Introduction and Methodology
 
-<!-- Briefly state how you gathered data about app performance, and in what environment 
-(which browsers, what browser versions, what kind of device, OS,
-width and height of viewport as reported in the console with `window.screen) -->
-
-<!-- Also report overall impact on whatdoesmysitecost results before and after all your changes -->
 
 In our project, we first looked at the plotly documentation to further improve our design and functionality of the website, as when we tested our app initially, we had a score of 96 without rendering any sort of graph.
 
@@ -16,8 +11,6 @@ Our goal is to test using the network panel and reduce as much overhead as possi
 
 ## Baseline Performance
 
-<!-- Summarize initial results for each tool that you used. Did the tools
-detect all the performance issues you see as a user? -->
 
 However, when looking at the routes and fetching the data through the network tab, there was a large amount of data being processed at a time, causing the site to be blocked in rendering path. This lead to large drops in performance when we added a graph.
 
@@ -53,11 +46,6 @@ Our final score was achieved at a score of 69, a point higher than the plotly ex
 
 ## Summary of Changes 
 
-<!-- Briefly describe each change and the impact it had one performance (be specific). If there
-was no performance improvement, explain why that might be the case -->
-
- <!--### Change 1 -->
-<!-- name main contributor to this change -->
 
 ### Change 1 - Redesign UI
 Lead: Christopher
@@ -88,13 +76,8 @@ Lead: Christopher
   - Solved, increased the speed of rendering of the graph, will no longer lock up when there is a wait time for the fetched data to be displayed.
     - This is probably due to using a smaller resource to cache the data initially and serving as a placeholder for a much larger dataset to be shown after a few more seconds.
 
- <!--### Change n -->
-
-<!--Lead:  name main contributor to this change -->
 
 ## Conclusion
-<!-- Summarize which changes had the greatest impact, note any surprising results and list 2-3 main 
-things you learned from this experience. -->
 
 Overall, the biggest improve to the app was a major redesign of the Chart.jsx, changing how it functioned and looked. When using the entire documentation it yielded a responsive webpage and results greater than even plotly's example of a minimally tracked graph. Our speeds increased drastically and the only big issue was with the amount of children presently rendered in the page, causing the app to slowdown a lot.
 
