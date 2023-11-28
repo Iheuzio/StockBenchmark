@@ -14,6 +14,7 @@ function Chart({ tickers }) {
         const requestUrl = `/tickers/${ticker}`;
         const res = await fetch(requestUrl, { cache: "no-cache"});
         const json = await res.json();
+        json.color = tickers.find((t) => t.ticker === ticker).color;
         return json;
       } catch (error) {
         setError(`Error fetching data for ${ticker}: ${error.message}`);
@@ -125,7 +126,7 @@ function Chart({ tickers }) {
         high: ticker.data.map((row) => row.high),
         low: ticker.data.map((row) => row.low),
         open: ticker.data.map((row) => (row.open === 0 ? row.low : row.open)),
-        increasing: { line: { color: ticker.color } },
+        increasing: { line: { color: ticker.color} },
         decreasing: { line: { color: '#' + (0xffffff - parseInt(ticker.color?.substring(1), 16)).toString(16) } },
         type: 'candlestick',
         xaxis: 'x',
