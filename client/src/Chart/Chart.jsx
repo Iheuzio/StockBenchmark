@@ -11,7 +11,8 @@ function Chart({ tickers }) {
   useEffect(() => {
     const fetchData = async (ticker) => {
       try {
-        const res = await fetch(`/tickers/${ticker}`);
+        const requestUrl = `/tickers/${ticker}`;
+        const res = await fetch(requestUrl, { cache: "no-cache"});
         const json = await res.json();
         return json;
       } catch (error) {
@@ -31,7 +32,6 @@ function Chart({ tickers }) {
       const data = await Promise.all(newTickersName.map((ticker) => fetchData(ticker)));
       setTickerData((old) => {
         if (data.length > 0) {
-          console.log("add");
           return old.concat(data);
         }
         return old.filter((tick) => tickersName.filter((name) => name === tick.ticker).length > 0);
