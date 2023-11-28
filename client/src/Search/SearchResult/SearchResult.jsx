@@ -33,6 +33,8 @@ function SearchResult({results, search, isFollowOption, selectedTickers, setSele
           if (!ticker.match(regex)) {
             let formatTicker = ticker.replace(search.toUpperCase(), '<b>' + search.toUpperCase() + '</b>');
             // Display search result according to the follow toggle
+            // if true display only followed ticker
+            // else show all
             if (isFollowOption) {
               if (followList.includes(result.ticker)) {
                 return (
