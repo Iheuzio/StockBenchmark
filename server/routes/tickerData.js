@@ -27,7 +27,7 @@ router.get('/tickers/:ticker', async (req, res) => {
   }
 });
 
-router.get('/tickers/temp/:ticker', async (req, res) => {
+router.get('/tickers/month/:ticker', async (req, res) => {
   try {
     const ticker = req.params.ticker;
     const tickerData = await db.readTickerThirtyDays(ticker);
