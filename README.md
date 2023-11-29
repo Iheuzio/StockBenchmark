@@ -6,7 +6,8 @@
 ## Feature & Description
 
 Stock Benchmark is a website that lets you compare different stock and get information on them.
-You will be able to visualise the stocks you have selected with
+You will be able to visualise the stocks you have selected with the search bar on the top left corner.
+If you like one stock you can add it as a favorite
 
 ## Prerequisite
 
