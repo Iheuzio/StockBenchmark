@@ -48,6 +48,7 @@ build-frontend:
       - main
       - master
       - staging
+      - /^v2\.[0-9]*\.[0-9]*$/
   artifacts:
     expire_in: 1 days
     when: on_success
@@ -74,14 +75,14 @@ build-app-archive:
   dependencies:
     - build-frontend
   rules:
-  - if: $CI_COMMIT_TAG =~ /^v2\.[0-9]*\.[0-9]*$/ && ($CI_COMMIT_BRANCH == 'staging' || $CI_COMMIT_BRANCH == 'main')
+  - if: $CI_COMMIT_TAG =~ /^v2\.[0-9]*\.[0-9]*$/
     when: on_success
   before_script:
     - cd client && npm ci --omit dev
     - cd ../server && npm ci --omit dev
     - cd ../
   script:
-    - tar -zcvf $RELEASE_FILE client/build/ server/node_modules server/bin server/controllers server/db server/routes server/utils server/app.js server/package-lock.json server/package.json
+    - tar -zcvf $RELEASE_FILE client/build/ client/node_modules server/node_modules server/bin server/controllers server/db server/routes server/utils server/app.js server/package-lock.json server/package.json
   artifacts:
     expire_in: 7 days
     when: on_success
