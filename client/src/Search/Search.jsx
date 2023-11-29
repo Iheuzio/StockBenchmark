@@ -17,7 +17,6 @@ function Search({selectedTickers, setSelectedTickers}) {
   const [search, setSearch] = useState('');
   const [isFollowOption, setIsFollowOption] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   // Fetch list of all tickers name from server
   useEffect(() => {
@@ -29,19 +28,8 @@ function Search({selectedTickers, setSelectedTickers}) {
     fetchTickers();
   }, []);
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
-  const toggleSearch = () => {
-    setIsSearch(!isSearch);
-  };
-
-  // If any data is fetched and the data's option is selected render
+  // If any data is fetched and the data's option is selected render full component
+  // else render component collapsted
   if (allTickers) {
     let results = allTickers.filter((ticker) => {
       return ticker.ticker.toLowerCase().startsWith(search.toLowerCase());
@@ -55,54 +43,47 @@ function Search({selectedTickers, setSelectedTickers}) {
 
     return (
       <>
-        {isSearch || isHovered ? (
-          <div
-            className='SearchOn'
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
+        {isSearch ?
+          <div className='SearchOn'>
             <div className='SearchOptions'>
-              <img
-                className='SearchImage'
-                src={burgerBar}
+            <img 
+                className='SearchImage' 
+                src={burgerBar} 
                 alt=''
-                onClick={toggleSearch}
-              />
+                onClick={() => setIsSearch(!isSearch)} />
               <SearchBar setSearch={setSearch} />
-              <FollowOption
+              <FollowOption 
                 isFollowOption={isFollowOption}
-                setIsFollowOption={setIsFollowOption}
-              />
+                setIsFollowOption={setIsFollowOption} />
             </div>
-            <SearchResult
-              results={results}
-              search={search}
+            <SearchResult 
+              results={results} 
+              search={search} 
               isFollowOption={isFollowOption}
               selectedTickers={selectedTickers}
-              setSelectedTickers={setSelectedTickers}
-            />
+              setSelectedTickers={setSelectedTickers} />
           </div>
-        ) : (
-          <div
+          :
+          <div 
             className='SearchOff'
-            onClick={toggleSearch}
-            onMouseEnter={handleMouseEnter}
-          >
-            <img className='SearchImage' src={burgerBar} alt='' />
+            onClick={() => setIsSearch(!isSearch)}>
+            <img 
+              className='SearchImage' 
+              src={burgerBar} 
+              alt='' />
           </div>
-        )}
+        }
       </>
     );
   } else {
     return (
-      <div
-        className='SearchOff'
-        onClick={toggleSearch}
-        onMouseEnter={handleMouseEnter}
-      >
-        <img className='SearchImage' src={burgerBar} alt='' />
+      <div className='SearchOff'>
+        <img 
+          className='SearchImage' 
+          src={burgerBar} 
+          alt='' />
       </div>
-    );
+    )
   }
 }
 
