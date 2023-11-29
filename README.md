@@ -94,7 +94,7 @@ You can also interact with your instance via the web-based CLI provided in the A
 Copy the build artifact of the release off gitlab
 
 ```
-wget -P ~ https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/jobs/5639023584/artifacts/raw/release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
+wget -P ~ https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/jobs/5639083869/artifacts/raw/release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
 ```
 
 Enter your credientials for gitlab.
@@ -109,6 +109,22 @@ Then extract that archive to a suitable directory.
 
 ```
 tar -xf release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
+```
+
+Download the dataset for populating the database, found at the issues for MongoDB API dataset
+```
+wget https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/uploads/349d7b60ebc762e140c20805cf85d426/dataset.zip
+```
+
+Unzip the file
+
+```
+unzip dataset.zip
+```
+
+Move the file into project
+```
+mv dataset 520-project/server/
 ```
 
 (Alternately you can set up GitLab ssh keys on the AWS instance to retain priviledge access to clone the repository)
