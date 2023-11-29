@@ -7,7 +7,8 @@
 
 Stock Benchmark is a website that lets you compare different stock and get information on them.
 You will be able to visualise the stocks you have selected with the search bar on the top left corner.
-If you like one stock you can add it as a favorite
+If you like one stock you can add it as a favorite. This will be saved even if you exit the webpage and come back.
+You can also see more information about the stock by clicking on its name in the top bar.
 
 ## Prerequisite
 
