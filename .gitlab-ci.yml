@@ -81,7 +81,7 @@ build-app-archive:
     - cd ../server && npm ci --omit dev
     - cd ../
   script:
-    - tar -zcvf $RELEASE_FILE client/build/ server/node_modules
+    - tar -zcvf $RELEASE_FILE client/build/ server/node_modules server/bin server/controllers server/db server/routes server/utils server/app.js server/package-lock.json server/package.json
   artifacts:
     expire_in: 7 days
     when: on_success
