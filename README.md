@@ -101,7 +101,7 @@ scp -r -i 2023-520-<name>.pem <file> bitnami@<address>:~
 If using wget on AWS, use your private token in the header
 
 ```
-wget --header "PRIVATE-TOKEN: <private token>" https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/jobs/5639083869/artifacts/raw/release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
+wget --header "PRIVATE-TOKEN: <private token>" https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/jobs/5639083869/artifacts/raw/release-520-project-oni-chris-charles-v2.0.05-06db414f.tar.gz
 ```
 
 Enter your credientials for gitlab.
