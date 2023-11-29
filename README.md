@@ -59,7 +59,8 @@ npm test
 
 # Deployment on AWS Lightsail (no container)
 
-see [screenshots dir](./screenshots)
+
+## Setup AWS Lightsail
 
 Assumes access to <https://dawsoncollege.awsapps.com/start#/> with dawson credentials
 
@@ -86,20 +87,31 @@ See Lightsail instance info in Lightsail dashboard for how to ssh into your inst
 ssh -i ~/2023-520-yourname.pem bitnami@<instance ip>
 ```
 
+## Setup deployment within AWS instance
+
 You can also interact with your instance via the web-based CLI provided in the AWS console.
 
-
-On your dev machine, make a fresh clone of the project (e.g. `quotes_deploy`), and only install production dependencies: `export NODE_ENV=production; cd quotes_deploy; npm run build`
-
-Delete everything from the `client` dir except `client/build` then compress+archive the project dir (e.g. tar.gz) and scp the archive to the AWS instance. 
+Copy the build artifact of the release off gitlab
 
 ```
-$ scp -r -i 2023-520-yourname.pem <file_to_copy> bitnami@<aws instance ip>:~
+wget -P ~ https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/jobs/5639023584/artifacts/raw/release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
+```
+
+Enter your credientials for gitlab.
+
+Move it to a more readable folder name:
+
+```
+mv release-520-project-oni-chris-charles-v2.0.04-660d4d2c 520-project
 ```
 
 Then extract that archive to a suitable directory.
 
-(Alternately you can set up GitLab ssh keys on the server to be able to clone this repo and build directly on the server -- you might hit memory limits when you build, though.)
+```
+tar -xf release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
+```
+
+(Alternately you can set up GitLab ssh keys on the AWS instance to retain priviledge access to clone the repository)
 
 Create a database on the VPS. Mongo is already installed and has an admin db.
 
@@ -112,7 +124,9 @@ In mongosh (see https://docs.bitnami.com/aws/infrastructure/mean/configuration/c
 ```
 // DATABASE_USER and DATABASE_PASSWORD are placeholders that you should change
 // getSiblingDB creates a new db without losing conn to existing or some such
-db = db.getSiblingDB('quotes_db')
+use dataset
+db.createCollection("dataset")
+db = db.getSiblingDB('dataset')
 db.createUser( { user: "DATABASE_USER", pwd: "DATABASE_PASSWORD", roles: [ "readWrite", "dbAdmin" ]} )
 ```
 
@@ -120,17 +134,36 @@ Set up `DB_URI` with local connection string: Sample `server/.env` to set up in 
 
 ```
 PORT=3001
-CLUSTER_NAME=quotes_db
-DB_URI=mongodb://DATABASE_USER:DATABASE_PASSWORD@127.0.0.1:27017/quotes_db?directConnection=true&serverSelectionTimeoutMS=2000
+CLUSTER_NAME=dataset
+DB_URI=mongodb://DATABASE_USER:DATABASE_PASSWORD@127.0.0.1:27017/dataset?directConnection=true&serverSelectionTimeoutMS=2000
 ```
 
-In the `quotes_deploy` code that we copied to the server, `server/bin/www` and `utils/seed.js` refer to
-a collection called `quotes` -- this will be created in the local db when we run the seeding script.
+(note your port may need to be changed, if already in use)
+```
+db.runCommand({whatsmyuri: 1})
+```
+
+Ensure you have the dataset database selected
+```
+show databases
+```
+
+Ensure you have a collection called dataset
+```
+show collections
+```
+
+Ensure your user is created
+```
+db.system.users.find()
+```
+
+Note the `server/bin/www`, `utils/seed.js` and the `utils/delete.js` files. They refer to a collection called `dataset` -- this was already created when we attributed a new database
 
 Once `.env` is configured, run the seeding script:
 
 ```
-cd quotes_deploy/server/
+cd 520-project/server/
 node utils/seed.js
 ```
 
@@ -143,8 +176,8 @@ mongosh "local connection string, same as DB_URI, inside quotation marks"
 Then in mongosh the following should print a bunch of quote documents:
 
 ```
-db.quotes.find()
-db.quotes.countDocuments()
+db.dataset.find()
+db.dataset.countDocuments()
 ```
 
 __If you can't get the local db working__: You can use a free-tier db via MongoDB Atlas. In your AWS Instance settings (click on the instance name), go to the Network settings and attach a static IP to your instance. Then add that IP address to your Mongo DB Atlas deployment (under Security > Network Access). Update your `.env` file to set `DB_URI` to the connection string for your Atlas
@@ -152,12 +185,14 @@ deployment. Restart your Express app if it was already running. _Take care to yo
 
 Next we need to run our server. The instance has [forever](https://www.npmjs.com/package/forever) installed by default
 
+from the 520-project folder
+
 ```
 cd server
 NODE_ENV=production forever start bin/www
 ```
 
-`forever` may show some warnings (see [this screenshot](screenshots/Screenshot 2023-11-14 at 15-08 forever production.png)) but this is okay. `forever list` should show you that `bin/www` is running and the log file in which its output is saved. You can `cat`
+You can `cat`
 the logfile to check if the output is what you expect.
 
 Now we can use `forever list` and so on to control the express app. If we modify the app
@@ -169,14 +204,33 @@ Configure a simple apache `vhost.conf` in `/opt/bitnami/apache/conf/vhosts/vhost
 to proxy 3001 to 80 (which is open/public on this aws instance)
 
 ```
+touch /opt/bitnami/apache/conf/vhosts/vhost.conf
+```
+
+navigate to the vhost.conf
+```
+cd  /opt/bitnami/apache/conf/vhosts/vhost.conf
+```
+
+Add the following lines
+
+```
 <VirtualHost 127.0.0.1:80 _default_:80>
   ProxyPass / http://localhost:3001/
   ProxyPassReverse / http://localhost:3001/
 </VirtualHost>
 ```
 
-Then restart the Apache service: `sudo /opt/bitnami/ctlscript.sh restart apache`
+You may return back to your user folder
+```
+cd ~
+```
+
+Then restart the Apache service:
+```
+sudo /opt/bitnami/ctlscript.sh restart apache
+```
 
 Now visiting your instance IP should show you the quotes app!
 
-If you run out of memory on the server while users interact with your app, you may upgrade the server to $5 a month resource package.
+If you run out of memory on the server while users interact with your app, you may upgrade the server.
