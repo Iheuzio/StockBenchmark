@@ -92,9 +92,16 @@ ssh -i ~/2023-520-yourname.pem bitnami@<instance ip>
 You can also interact with your instance via the web-based CLI provided in the AWS console.
 
 Copy the build artifact of the release off gitlab
+If you do not use wget on the AWS machine, you'll have to manually copy the files over with scp
 
 ```
-wget -P ~ https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/jobs/5639083869/artifacts/raw/release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
+scp -r -i 2023-520-<name>.pem <file> bitnami@<address>:~
+```
+
+If using wget on AWS, use your private token in the header
+
+```
+wget --header "PRIVATE-TOKEN: <private token>" https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/-/jobs/5639083869/artifacts/raw/release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
 ```
 
 Enter your credientials for gitlab.
@@ -113,7 +120,7 @@ tar -xf release-520-project-oni-chris-charles-v2.0.04-660d4d2c.tar.gz
 
 Download the dataset for populating the database, found at the issues for MongoDB API dataset
 ```
-wget https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/uploads/349d7b60ebc762e140c20805cf85d426/dataset.zip
+wget --header "PRIVATE-TOKEN: PRIVATE-TOKEN: <private token>" https://gitlab.com/csy3dawson23-24/520/teams/TeamG13-OniChrisCharles/520-project-oni-chris-charles/uploads/349d7b60ebc762e140c20805cf85d426/dataset.zip
 ```
 
 Unzip the file
